@@ -80,8 +80,11 @@ source_group("ctrl" FILES ${agg_ctrl_INC})
 file(GLOB agg_platform_SRC src/platform/win32/*.cpp)
 source_group("platfrom" FILES ${agg_platform_SRC})
 
-file(GLOB agg_platform_INC inlcude/platform/*.h include/platform/win32/*.h)
+file(GLOB agg_platform_INC include/platform/*.h include/platform/win32/*.h)
 source_group("platfrom" FILES ${agg_platform_INC})
+
+file(GLOB util_INC include/util/*.h)
+source_group("util" FILES ${util_INC})
 
 file(GLOB gpc_SRC gpc/*.h gpc/*.c)
 source_group("gpc" FILES ${gpc_SRC})
@@ -95,7 +98,8 @@ source_group("font_freetype" FILES ${font_freetype_SRC})
 add_library(agg 
 ${agg_SRC} ${agg_INC} 
 ${agg_ctrl_SRC} ${agg_ctrl_INC} 
-${agg_platform_SRC} ${agg_platform_INC} 
+${agg_platform_SRC} ${agg_platform_INC}
+${util_INC}
 ${gpc_SRC}
 ${font_win32_tt_SRC}
 ${font_freetype_SRC})
