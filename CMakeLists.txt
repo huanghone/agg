@@ -152,3 +152,25 @@ target_link_libraries(flash_rasterizer ${DEP_LIBS})
 
 add_executable(flash_rasterizer2 WIN32 examples/flash_rasterizer2.cpp)
 target_link_libraries(flash_rasterizer2 ${DEP_LIBS})
+
+set(TEST_TARGET
+	aa_demo
+	aa_test
+	alpha_gradient
+	alpha_mask
+	alpha_mask2
+	alpha_mask3
+	bezier_div
+	blend_color
+	blur
+	bspline
+	rasterizers
+	truetype_test
+	raster_text
+	image1
+	flash_rasterizer
+	flash_rasterizer2
+)
+
+
+set_target_properties(${TEST_TARGET} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_ROOT})
