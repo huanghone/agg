@@ -14,8 +14,8 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 #####################################
 # external libraries
 #####################################
-set(freetype_DIR D:/lib/freetype/lib/cmake/freetype)
-find_package(freetype REQUIRED)
+#set(freetype_DIR D:/lib/freetype/lib/cmake/freetype)
+#find_package(freetype REQUIRED)
 
 #####################################
 # include dirs
@@ -24,7 +24,7 @@ find_package(freetype REQUIRED)
 set(INC_DIR
 	include
 	font_win32_tt
-	${FREETYPE_INCLUDE_DIRS}
+	#${FREETYPE_INCLUDE_DIRS}
 )
 
 include_directories(${INC_DIR})
@@ -58,7 +58,7 @@ set(CMAKE_C_FLAGS ${COMPILE_FLAG})
 #####################################
 
 set(DEP_LIBS
-		${FREETYPE_LIBRARIES}
+		#${FREETYPE_LIBRARIES}
 )
 
 #####################################
@@ -92,8 +92,8 @@ source_group("gpc" FILES ${gpc_SRC})
 file(GLOB font_win32_tt_SRC font_win32_tt/*.h font_win32_tt/*.cpp)
 source_group("font_win32_tt" FILES ${font_win32_tt_SRC})
 
-file(GLOB font_freetype_SRC font_freetype/*.h font_freetype/*.cpp)
-source_group("font_freetype" FILES ${font_freetype_SRC})
+#file(GLOB font_freetype_SRC font_freetype/*.h font_freetype/*.cpp)
+#source_group("font_freetype" FILES ${font_freetype_SRC})
 
 add_library(agg 
 ${agg_SRC} ${agg_INC} 
@@ -101,8 +101,8 @@ ${agg_ctrl_SRC} ${agg_ctrl_INC}
 ${agg_platform_SRC} ${agg_platform_INC}
 ${util_INC}
 ${gpc_SRC}
-${font_win32_tt_SRC}
-${font_freetype_SRC})
+${font_win32_tt_SRC})
+#${font_freetype_SRC})
 
 set(DEP_LIBS ${DEP_LIBS} agg)
 
