@@ -38,7 +38,7 @@ namespace agg
 {
 
     //----------------------------------------------------------cbox_ctrl_impl
-    class cbox_ctrl_impl : public ctrl
+    class cbox_ctrl_impl : public View
     {
     public:
         cbox_ctrl_impl(double x, double y, const char* label, bool flip_y=false);

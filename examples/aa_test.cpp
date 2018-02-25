@@ -204,18 +204,18 @@ void fill_color_array(ColorArrayT& array,
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     gamma_lut_type              m_gamma;
     agg::slider_ctrl<agg::rgba> m_slider_gamma;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_gamma(1.0),
         m_slider_gamma(3, 3,    480-3, 8,    !flip_y)
     {
-        add_ctrl(m_slider_gamma);
+        AddChildView(m_slider_gamma);
         m_slider_gamma.range(0.1, 3.0);
         m_slider_gamma.value(1.6);
         m_slider_gamma.label("Gamma=%4.3f");

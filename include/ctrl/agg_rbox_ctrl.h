@@ -39,7 +39,7 @@ namespace agg
 {
 
     //------------------------------------------------------------------------
-    class rbox_ctrl_impl : public ctrl
+    class rbox_ctrl_impl : public View
     {
     public:
         rbox_ctrl_impl(double x1, double y1, double x2, double y2, bool flip_y=false);

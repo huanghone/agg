@@ -297,7 +297,7 @@ static agg::int8u g_gradient_colors[] =
 enum flip_y_e { flip_y = true };
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     agg::rbox_ctrl<agg::rgba8>    m_method;
     agg::slider_ctrl<agg::rgba8>  m_radius;
@@ -320,24 +320,24 @@ class the_application : public agg::AggApplication
 public:
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_method     (10.0, 10.0, 130.0, 55.0, !flip_y),
         m_radius     (130 + 10.0, 10.0 + 4.0, 130 + 300.0, 10.0 + 8.0 + 4.0, !flip_y),
         m_shadow_ctrl(4),
         m_shape(m_path)
     {
-        add_ctrl(m_method);
+        AddChildView(m_method);
         m_method.text_size(8);
         m_method.add_item("Single Color");
         m_method.add_item("Color LUT");
         m_method.cur_item(1);
 
-        add_ctrl(m_radius);
+        AddChildView(m_radius);
         m_radius.range(0.0, 40.0);
         m_radius.value(15.0);
         m_radius.label("Blur Radius=%1.2f");
 
-        add_ctrl(m_shadow_ctrl);
+        AddChildView(m_shadow_ctrl);
 
         m_path.remove_all();
         m_path.move_to(28.47, 6.45);

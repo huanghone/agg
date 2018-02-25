@@ -143,7 +143,7 @@ namespace agg
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     agg::slider_ctrl<agg::rgba> m_num_cb;
 
@@ -164,7 +164,7 @@ public:
     }
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_num_cb(5, 5, 150, 12, !flip_y),
 
         m_alpha_buf(0),
@@ -173,7 +173,7 @@ public:
         m_slider_value(0.0)
     {
         parse_lion();
-        add_ctrl(m_num_cb);
+        AddChildView(m_num_cb);
         m_num_cb.range(5, 100);
         m_num_cb.value(10);
         m_num_cb.label("N=%.2f");

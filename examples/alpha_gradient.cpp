@@ -26,7 +26,7 @@ typedef pixfmt_type::color_type color_type;
 typedef color_type::value_type color_value_type;
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     double m_x[3];
     double m_y[3];
@@ -38,7 +38,7 @@ class the_application : public agg::AggApplication
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_idx(-1),
         m_alpha(2,  2,  200, 30,  6, !flip_y)
     {
@@ -53,7 +53,7 @@ public:
         m_alpha.point(4, 4.0/5.0, 1.0 - 1.0/5.0);
         m_alpha.point(5, 1.0,     1.0);
         m_alpha.update_spline();
-        add_ctrl(m_alpha);
+        AddChildView(m_alpha);
     }
 
 

@@ -38,7 +38,7 @@ namespace agg
 {
 
     //--------------------------------------------------------bezier_ctrl_impl
-    class bezier_ctrl_impl : public ctrl
+    class bezier_ctrl_impl : public View
     {
     public:
         bezier_ctrl_impl();
@@ -119,7 +119,7 @@ namespace agg
 
 
     //--------------------------------------------------------curve3_ctrl_impl
-    class curve3_ctrl_impl : public ctrl
+    class curve3_ctrl_impl : public View
     {
     public:
         curve3_ctrl_impl();

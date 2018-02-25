@@ -110,7 +110,7 @@ namespace agg
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     double m_x[3];
     double m_y[3];
@@ -123,7 +123,7 @@ class the_application : public agg::AggApplication
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_slider1(80, 10,    600-10, 19,    !flip_y),
         m_slider2(80, 10+20, 600-10, 19+20, !flip_y)
     {
@@ -132,8 +132,8 @@ public:
         m_x[1] = 369;   m_y[1] = 170;
         m_x[2] = 143;   m_y[2] = 310;
 
-        add_ctrl(m_slider1);
-        add_ctrl(m_slider2);
+        AddChildView(m_slider1);
+        AddChildView(m_slider2);
 
         m_slider1.range(8.0, 100.0);
         m_slider1.num_steps(23);

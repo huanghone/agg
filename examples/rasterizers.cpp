@@ -21,7 +21,7 @@ enum flip_y_e { flip_y = true };
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     double m_x[3];
     double m_y[3];
@@ -38,7 +38,7 @@ class the_application : public agg::AggApplication
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_idx(-1),
         m_gamma(130 + 10.0, 10.0 + 4.0, 130 + 150.0, 10.0 + 8.0 + 4.0, !flip_y),
         m_alpha(130 + 150.0 + 10.0, 10.0 + 4.0, 500 - 10.0, 10.0 + 8.0 + 4.0, !flip_y),
@@ -48,19 +48,19 @@ public:
         m_x[1] = 369 + 120; m_y[1] = 170;
         m_x[2] = 143 + 120; m_y[2] = 310;
 
-        add_ctrl(m_gamma);
+        AddChildView(m_gamma);
         m_gamma.range(0.0, 1.0);
         m_gamma.value(0.5);
         m_gamma.label("Gamma=%1.2f");
         m_gamma.no_transform();
 
-        add_ctrl(m_alpha);
+        AddChildView(m_alpha);
         m_alpha.range(0.0, 1.0);
         m_alpha.value(1.0);
         m_alpha.label("Alpha=%1.2f");
         m_alpha.no_transform();
 
-        add_ctrl(m_test);
+        AddChildView(m_test);
         m_test.no_transform();
     }
 

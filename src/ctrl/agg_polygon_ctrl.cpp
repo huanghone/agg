@@ -28,7 +28,7 @@ namespace agg
 {
 
     polygon_ctrl_impl::polygon_ctrl_impl(unsigned np, double point_radius) :
-        ctrl(0, 0, 1, 1, false),
+        View(0, 0, 1, 1, false),
         m_polygon(np * 2),
         m_num_points(np),
         m_node(-1),

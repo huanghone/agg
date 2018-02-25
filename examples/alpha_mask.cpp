@@ -51,7 +51,7 @@ agg::alpha_mask_gray8 g_alpha_mask(g_alpha_mask_rbuf);
 agg::rasterizer_scanline_aa<> g_rasterizer;
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     unsigned char* m_alpha_buf;
     agg::rendering_buffer m_alpha_rbuf;
@@ -63,7 +63,7 @@ public:
     }
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_alpha_buf(0)
     {
         parse_lion();

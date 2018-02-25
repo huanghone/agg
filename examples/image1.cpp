@@ -24,18 +24,18 @@ enum flip_y_e { flip_y = true };
 #include "pixel_formats.h"
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     agg::slider_ctrl<agg::rgba8> m_angle;
     agg::slider_ctrl<agg::rgba8> m_scale;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_angle(5,  5,    300, 12,    !flip_y),
         m_scale(5,  5+15, 300, 12+15, !flip_y)
     {
-        add_ctrl(m_angle);
+        AddChildView(m_angle);
         add_ctrl(m_scale);
         m_angle.label("Angle=%3.2f");
         m_scale.label("Scale=%3.2f");

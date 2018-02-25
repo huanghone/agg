@@ -31,7 +31,7 @@ namespace agg
     //------------------------------------------------------------------------
     spline_ctrl_impl::spline_ctrl_impl(double x1, double y1, double x2, double y2, 
                                        unsigned num_pnt, bool flip_y) :
-        ctrl(x1, y1, x2, y2, flip_y),
+        View(x1, y1, x2, y2, flip_y),
         m_num_pnt(num_pnt),
         m_border_width(1.0),
         m_border_extra(0.0),

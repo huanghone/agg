@@ -88,7 +88,7 @@ void make_gb_poly(agg::path_storage& ps);
 void make_arrows(agg::path_storage& ps);
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     agg::rbox_ctrl<agg::rgba8> m_polygons;
     agg::rbox_ctrl<agg::rgba8> m_operation;
@@ -114,7 +114,7 @@ public:
     }
     
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_polygons (5.0,     5.0, 5.0+205.0,  110.0,  !flip_y),
         m_operation(555.0,   5.0, 555.0+80.0, 55.0,  !flip_y),
         m_alpha_buf(0),
@@ -126,7 +126,7 @@ public:
         m_operation.add_item("AND");
         m_operation.add_item("SUB");
         m_operation.cur_item(0);
-        add_ctrl(m_operation);
+        AddChildView(m_operation);
         m_operation.no_transform();
 
         m_polygons.add_item("Two Simple Paths");
@@ -135,7 +135,7 @@ public:
         m_polygons.add_item("Great Britain and Spiral");
         m_polygons.add_item("Spiral and Glyph");
         m_polygons.cur_item(3);
-        add_ctrl(m_polygons);
+        AddChildView(m_polygons);
         m_polygons.no_transform();
     }
 

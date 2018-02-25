@@ -22,7 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 //
-// class AggApplication
+// class Widget
 //
 // It's not a part of the AGG library, it's just a helper class to create 
 // interactive demo examples. Since the examples should not be too complex
@@ -51,9 +51,9 @@
 // ~/agg/src/platform/X11
 // and so on.
 //
-// All the system dependent stuff sits in the platform_specific 
+// All the system dependent stuff sits in the WidgeImp 
 // class which is forward-declared here but not defined. 
-// The AggApplication class has just a pointer to it and it's 
+// The Widget class has just a pointer to it and it's 
 // the responsibility of the implementation to create/delete it.
 // This class being defined in the implementation file can have 
 // any platform dependent stuff such as HWND, X11 Window and so on.
@@ -246,11 +246,11 @@ namespace agg {
     // A predeclaration of the platform dependent class. Since we do not
     // know anything here the only we can have is just a pointer to this
     // class as a data member. It should be created and destroyed explicitly
-    // in the constructor/destructor of the AggApplication class. 
-    // Although the pointer to platform_specific is public the application 
+    // in the constructor/destructor of the Widget class. 
+    // Although the pointer to WidgeImp is public the application 
     // cannot have access to its members or methods since it does not know
     // anything about them and it's a perfect incapsulation :-)
-    class platform_specific;
+    class WidgeImp;
 
     
     //----------------------------------------------------------ctrl_container
@@ -258,16 +258,16 @@ namespace agg {
     // This class is used to ease the event handling with controls.
     // The implementation should simply call the appropriate methods
     // of this class when appropriate events occur.
-    class ctrl_container
+    class RootView
     {
         enum max_ctrl_e { max_ctrl = 64 };
 
     public:
         //--------------------------------------------------------------------
-        ctrl_container() : m_num_ctrl(0), m_cur_ctrl(-1) {}
+        RootView() : m_num_ctrl(0), m_cur_ctrl(-1) {}
 
         //--------------------------------------------------------------------
-        void add(ctrl& c)
+        void add(View& c)
         {
             if(m_num_ctrl < max_ctrl)
             {
@@ -355,22 +355,22 @@ namespace agg {
         }
 
     private:
-        ctrl*         m_ctrl[max_ctrl];
+        View*         m_ctrl[max_ctrl];
         unsigned      m_num_ctrl;
         int           m_cur_ctrl;
     };
 
 
 
-//---------------------------------------------------------AggApplication
+//---------------------------------------------------------Widget
 // This class is a base one to the apllication classes. It can be used 
 // as follows:
 //
-//  class the_application : public agg::AggApplication
+//  class the_application : public agg::Widget
 //  {
 //  public:
 //      the_application(unsigned bpp, bool flip_y) :
-//          AggApplication(bpp, flip_y) 
+//          Widget(bpp, flip_y) 
 //      . . .
 //
 //      //override stuff . . .
@@ -414,7 +414,7 @@ namespace agg {
 // The demo applications are simple and their use is restricted, so, 
 // this approach is quite reasonable.
 // 
-class AggApplication {
+class Widget {
 public:
 	void OnSize(unsigned width, unsigned height);
 	void OnPaint();
@@ -432,8 +432,8 @@ public:
 
   // format - see enum pix_format_e {};
   // flip_y - true if you want to have the Y-axis flipped vertically.
-  AggApplication(pix_format_e format, bool flip_y);
-  virtual ~AggApplication();
+  Widget(pix_format_e format, bool flip_y);
+  virtual ~Widget();
 
   // Setting the windows caption (title). Should be able
   // to be called at least before calling init(). 
@@ -537,16 +537,6 @@ public:
 		}
 	}
 
-  //--------------------------------------------------------------------
-  // Event handlers. They are not pure functions, so you don't have
-  // to override them all.
-  // In my demo applications these functions are defined inside
-  // the the_application class (implicit inlining) which is in general 
-  // very bad practice, I mean vitual inline methods. At least it does
-  // not make sense. 
-  // But in this case it's quite appropriate bacause we have the only
-  // instance of the the_application class and it is in the same file 
-  // where this class is defined.
 	virtual void on_init() {}
 	virtual void on_resize(int sx, int sy) {}
 	virtual void on_idle() {}
@@ -562,13 +552,13 @@ public:
   // Adding control elements. A control element once added will be 
   // working and reacting to the mouse and keyboard events. Still, you
   // will have to render them in the on_draw() using function 
-  // render_ctrl() because AggApplication doesn't know anything about 
+  // render_ctrl() because Widget doesn't know anything about 
   // renderers you use. The controls will be also scaled automatically 
   // if they provide a proper scaling mechanism (all the controls 
   // included into the basic AGG package do).
   // If you don't need a particular control to be scaled automatically 
   // call ctrl::no_transform() after adding.
-  void add_ctrl(ctrl& c) { m_ctrls.add(c); c.transform(m_resize_mtx); }
+  void AddChildView(View& c) { m_ctrls.add(c); c.transform(m_resize_mtx); }
 
   //--------------------------------------------------------------------
   // Auxiliary functions. trans_affine_resizing() modifier sets up the resizing 
@@ -651,15 +641,15 @@ public:
   const char* full_file_name(const char* file_name);
 
 public:
-  platform_specific* m_specific;
-  ctrl_container m_ctrls;
+  WidgeImp* m_specific;
+  RootView m_ctrls;
 
   // Sorry, I'm too tired to describe the private 
   // data membders. See the implementations for different
   // platforms for details.
 private:
-  AggApplication(const AggApplication&);
-  const AggApplication& operator = (const AggApplication&);
+  Widget(const Widget&);
+  const Widget& operator = (const Widget&);
 
   pix_format_e     m_format;
   unsigned         m_bpp;

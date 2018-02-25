@@ -41,7 +41,7 @@ namespace agg
     // Class that can be used to create an interactive control to set up 
     // gamma arrays.
     //------------------------------------------------------------------------
-    class spline_ctrl_impl : public ctrl
+    class spline_ctrl_impl : public View
     {
     public:
         spline_ctrl_impl(double x1, double y1, double x2, double y2, 

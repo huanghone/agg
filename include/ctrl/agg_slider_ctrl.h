@@ -40,7 +40,7 @@ namespace agg
 {
 
     //--------------------------------------------------------slider_ctrl_impl
-    class slider_ctrl_impl : public ctrl
+    class slider_ctrl_impl : public View
     {
     public:
         slider_ctrl_impl(double x1, double y1, double x2, double y2, bool flip_y=false);

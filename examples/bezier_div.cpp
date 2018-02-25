@@ -45,7 +45,7 @@ void bezier4_point(double x1, double y1, double x2, double y2,
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     agg::rgba8 m_ctrl_color;
     agg::bezier_ctrl<agg::rgba8> m_curve1;
@@ -71,7 +71,7 @@ public:
 
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
         m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
         m_approximation_scale(5.0,    17+5.0, 240.0,    17+12.0,  !flip_y),
@@ -105,45 +105,45 @@ public:
         //m_curve1.curve(84.200000,302.80100, 84.200000,302.80100, 79.000000,292.40100, 97.001000,304.40100); // From tiger.svg
         //m_curve1.curve(97.001000,304.40100, 79.000000,292.40100, 84.200000,302.80100, 84.200000,302.80100); // From tiger.svg opposite dir
         //m_curve1.curve(475, 157, 200, 100, 453, 100, 222, 157); // Cusp, failure for Adobe SVG
-        add_ctrl(m_curve1);
+        AddChildView(m_curve1);
         m_curve1.no_transform();
 
         m_angle_tolerance.label("Angle Tolerance=%.0f deg");
         m_angle_tolerance.range(0, 90);
         m_angle_tolerance.value(15);
-        add_ctrl(m_angle_tolerance);
+        AddChildView(m_angle_tolerance);
         m_angle_tolerance.no_transform();
 
         m_approximation_scale.label("Approximation Scale=%.3f");
         m_approximation_scale.range(0.1, 5);
         m_approximation_scale.value(1.0);
-        add_ctrl(m_approximation_scale);
+        AddChildView(m_approximation_scale);
         m_approximation_scale.no_transform();
 
         m_cusp_limit.label("Cusp Limit=%.0f deg");
         m_cusp_limit.range(0, 90);
         m_cusp_limit.value(0);
-        add_ctrl(m_cusp_limit);
+        AddChildView(m_cusp_limit);
         m_cusp_limit.no_transform();
 
         m_width.label("Width=%.2f");
         m_width.range(-50, 100);
         m_width.value(50.0);
-        add_ctrl(m_width);
+        AddChildView(m_width);
         m_width.no_transform();
 
-        add_ctrl(m_show_points);
+        AddChildView(m_show_points);
         m_show_points.no_transform();
         m_show_points.status(true);
 
-        add_ctrl(m_show_outline);
+        AddChildView(m_show_outline);
         m_show_outline.no_transform();
         m_show_outline.status(true);
 
         m_curve_type.add_item("Incremental");
         m_curve_type.add_item("Subdiv");
         m_curve_type.cur_item(1);
-        add_ctrl(m_curve_type);
+        AddChildView(m_curve_type);
         m_curve_type.no_transform();
 
         m_case_type.text_size(7);
@@ -157,7 +157,7 @@ public:
         m_case_type.add_item("Fancy Stroke");
         m_case_type.add_item("Jaw");
         m_case_type.add_item("Ugly Jaw");
-        add_ctrl(m_case_type);
+        AddChildView(m_case_type);
         m_case_type.no_transform();
 
         m_inner_join.text_size(8);
@@ -166,7 +166,7 @@ public:
         m_inner_join.add_item("Inner Jag");
         m_inner_join.add_item("Inner Round");
         m_inner_join.cur_item(3);
-        add_ctrl(m_inner_join);
+        AddChildView(m_inner_join);
         m_inner_join.no_transform();
 
         m_line_join.text_size(8);
@@ -177,7 +177,7 @@ public:
         m_line_join.add_item("Miter Round");
 
         m_line_join.cur_item(1);
-        add_ctrl(m_line_join);
+        AddChildView(m_line_join);
         m_line_join.no_transform();
 
         m_line_cap.text_size(8);
@@ -185,7 +185,7 @@ public:
         m_line_cap.add_item("Square Cap");
         m_line_cap.add_item("Round Cap");
         m_line_cap.cur_item(0);
-        add_ctrl(m_line_cap);
+        AddChildView(m_line_cap);
         m_line_cap.no_transform();
     }
 

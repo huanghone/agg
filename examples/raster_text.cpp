@@ -43,7 +43,7 @@ private:
 
 
 //------------------------------------------------------------------------
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
 public:
     typedef agg::pixfmt_bgr24 pixfmt;
@@ -51,7 +51,7 @@ public:
     typedef agg::glyph_raster_bin<agg::rgba8> glyph_gen;
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y)
+        agg::Widget(format, flip_y)
     {
     }
 

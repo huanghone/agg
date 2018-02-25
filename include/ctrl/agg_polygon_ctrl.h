@@ -85,7 +85,7 @@ namespace agg
 
 
 
-    class polygon_ctrl_impl : public ctrl
+    class polygon_ctrl_impl : public View
     {
     public:
         polygon_ctrl_impl(unsigned np, double point_radius=5);

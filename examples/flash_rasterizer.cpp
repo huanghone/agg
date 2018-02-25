@@ -277,7 +277,7 @@ namespace agg
 
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
 
 public:
@@ -291,7 +291,7 @@ public:
     int                        m_hit_y;
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::AggApplication(format, flip_y),
+        agg::Widget(format, flip_y),
         m_point_idx(-1),
         m_hit_x(-1),
         m_hit_y(-1)

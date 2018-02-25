@@ -40,7 +40,7 @@ namespace agg
     // Class that can be used to create an interactive control to set up 
     // gamma arrays.
     //------------------------------------------------------------------------
-    class gamma_ctrl_impl : public ctrl
+    class gamma_ctrl_impl : public View
     {
     public:
         gamma_ctrl_impl(double x1, double y1, double x2, double y2, bool flip_y=false);

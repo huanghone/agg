@@ -141,7 +141,7 @@ static char_type text[] =
 bool text_flip = false;
 
 
-class the_application : public agg::AggApplication
+class the_application : public agg::Widget
 {
     typedef agg::gamma_lut<agg::int8u, agg::int16u, 8, 16> gamma_type;
     typedef agg::pixfmt_bgr24_gamma<gamma_type> pixfmt_type;
@@ -173,7 +173,7 @@ class the_application : public agg::AggApplication
 
 public:
     the_application(HDC dc, agg::pix_format_e format, bool flip) :
-        agg::AggApplication(format, flip),
+        agg::Widget(format, flip),
         m_ren_type     (5.0, 5.0, 5.0+150.0,   110.0,  !flip),
         m_height       (160, 10.0, 640-5.0,    18.0,   !flip),
         m_width        (160, 30.0, 640-5.0,    38.0,   !flip),
@@ -194,7 +194,7 @@ public:
         m_ren_type.add_item("AGG Mono");
         m_ren_type.add_item("AGG Gray 8");
         m_ren_type.cur_item(1);
-        add_ctrl(m_ren_type);
+        AddChildView(m_ren_type);
         m_ren_type.no_transform();
 
         m_height.label("Font Height=%.2f");
@@ -202,7 +202,7 @@ public:
         m_height.num_steps(32-8);
         m_height.value(18);
         m_height.text_thickness(1.5);
-        add_ctrl(m_height);
+        AddChildView(m_height);
         m_height.no_transform();
 
         m_width.label("Font Width=%.2f");
@@ -210,31 +210,31 @@ public:
         m_width.num_steps(32-8);
         m_width.text_thickness(1.5);
         m_width.value(18);
-        add_ctrl(m_width);
+        AddChildView(m_width);
         m_width.no_transform();
 
         m_weight.label("Font Weight=%.2f");
         m_weight.range(-2, 2);
         m_weight.text_thickness(1.5);
-        add_ctrl(m_weight);
+        AddChildView(m_weight);
         m_weight.no_transform();
 
         m_gamma.label("Gamma=%.2f");
         m_gamma.range(0.1, 2.0);
         m_gamma.value(1.0);
         m_gamma.text_thickness(1.5);
-        add_ctrl(m_gamma);
+        AddChildView(m_gamma);
         m_gamma.no_transform();
 
-        add_ctrl(m_hinting);
+        AddChildView(m_hinting);
         m_hinting.status(true);
         m_hinting.no_transform();
 
-        add_ctrl(m_kerning);
+        AddChildView(m_kerning);
         m_kerning.status(true);
         m_kerning.no_transform();
 
-        add_ctrl(m_performance);
+        AddChildView(m_performance);
         m_performance.no_transform();
 
 //        m_curves.approximation_method(agg::curve_div);

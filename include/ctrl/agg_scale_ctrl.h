@@ -37,7 +37,7 @@ namespace agg
 {
 
     //------------------------------------------------------------------------
-    class scale_ctrl_impl : public ctrl
+    class scale_ctrl_impl : public View
     {
         enum move_e
         {

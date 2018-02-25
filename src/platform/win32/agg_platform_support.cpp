@@ -30,54 +30,46 @@
 #include "util/agg_color_conv_rgb16.h"
 
 
-namespace agg
-{
+namespace agg {
     
-    //------------------------------------------------------------------------
-    HINSTANCE g_windows_instance = 0;
-    int       g_windows_cmd_show = 0;
+HINSTANCE g_windows_instance = 0;
+int       g_windows_cmd_show = 0;
+
+class WidgeImp {
+public:
+	WidgeImp(pix_format_e format, bool flip_y);
+
+	void create_pmap(unsigned width, unsigned height, rendering_buffer* wnd);
+
+	void display_pmap(HDC dc, const rendering_buffer* src);
+	bool load_pmap(const char* fn, unsigned idx, rendering_buffer* dst);
+
+	bool save_pmap(const char* fn, unsigned idx, const rendering_buffer* src);
+
+	unsigned translate(unsigned keycode);
+
+	pix_format_e  m_format;
+	pix_format_e  m_sys_format;
+	bool          m_flip_y;
+	unsigned      m_bpp;
+	unsigned      m_sys_bpp;
+	HWND          m_hwnd;
+	Pixelmap     m_pmap_window;
+	Pixelmap     m_pmap_img[Widget::max_images];
+	unsigned      m_keymap[256];
+	unsigned      m_last_translated_key;
+	int           m_cur_x;
+	int           m_cur_y;
+	unsigned      m_input_flags;
+	bool          m_redraw_flag;
+	HDC           m_current_dc;
+	LARGE_INTEGER m_sw_freq;
+	LARGE_INTEGER m_sw_start;
+};
 
 
     //------------------------------------------------------------------------
-    class platform_specific
-    {
-    public:
-        platform_specific(pix_format_e format, bool flip_y);
-
-        void create_pmap(unsigned width, unsigned height, 
-                         rendering_buffer* wnd);
-
-        void display_pmap(HDC dc, const rendering_buffer* src);
-        bool load_pmap(const char* fn, unsigned idx, 
-                       rendering_buffer* dst);
-
-        bool save_pmap(const char* fn, unsigned idx, 
-                       const rendering_buffer* src);
-
-        unsigned translate(unsigned keycode);
-
-        pix_format_e  m_format;
-        pix_format_e  m_sys_format;
-        bool          m_flip_y;
-        unsigned      m_bpp;
-        unsigned      m_sys_bpp;
-        HWND          m_hwnd;
-        Pixelmap     m_pmap_window;
-        Pixelmap     m_pmap_img[AggApplication::max_images];
-        unsigned      m_keymap[256];
-        unsigned      m_last_translated_key;
-        int           m_cur_x;
-        int           m_cur_y;
-        unsigned      m_input_flags;
-        bool          m_redraw_flag;
-        HDC           m_current_dc;
-        LARGE_INTEGER m_sw_freq;
-        LARGE_INTEGER m_sw_start;
-    };
-
-
-    //------------------------------------------------------------------------
-    platform_specific::platform_specific(pix_format_e format, bool flip_y) :
+    WidgeImp::WidgeImp(pix_format_e format, bool flip_y) :
         m_format(format),
         m_sys_format(pix_format_undefined),
         m_flip_y(flip_y),
@@ -218,7 +210,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_specific::create_pmap(unsigned width, 
+    void WidgeImp::create_pmap(unsigned width, 
                                         unsigned height,
                                         rendering_buffer* wnd)
     {
@@ -310,7 +302,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_specific::display_pmap(HDC dc, const rendering_buffer* src)
+    void WidgeImp::display_pmap(HDC dc, const rendering_buffer* src)
     {
         if(m_sys_format == m_format)
         {
@@ -339,7 +331,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool platform_specific::save_pmap(const char* fn, unsigned idx, 
+    bool WidgeImp::save_pmap(const char* fn, unsigned idx, 
                                       const rendering_buffer* src)
     {
         if(m_sys_format == m_format)
@@ -367,7 +359,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool platform_specific::load_pmap(const char* fn, unsigned idx, 
+    bool WidgeImp::load_pmap(const char* fn, unsigned idx, 
                                       rendering_buffer* dst)
     {
         Pixelmap pmap_tmp;
@@ -552,7 +544,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned platform_specific::translate(unsigned keycode)
+    unsigned WidgeImp::translate(unsigned keycode)
     {
         return m_last_translated_key = (keycode > 255) ? 0 : m_keymap[keycode];
     }
@@ -569,14 +561,14 @@ namespace agg
 		return flags;
 	}
 
-	void AggApplication::OnSize(unsigned width, unsigned height) {
+	void Widget::OnSize(unsigned width, unsigned height) {
 		m_specific->create_pmap(width, height, &rbuf_window());
 		trans_affine_resizing(width, height);
 		on_resize(width, height);
 		force_redraw();
 	}
 
-	void AggApplication::OnPaint() {
+	void Widget::OnPaint() {
 		HWND hwnd = m_specific->m_hwnd;
 		PAINTSTRUCT ps;
 		HDC paintDC = ::BeginPaint(hwnd, &ps);
@@ -591,7 +583,7 @@ namespace agg
 		::EndPaint(hwnd, &ps);
 	}
 
-	void AggApplication::OnLButtonDown(int x, int y, WPARAM wParam) {
+	void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
 		::SetCapture(m_specific->m_hwnd);
 		m_specific->m_cur_x = x;
 		if (flip_y()) {
@@ -617,7 +609,7 @@ namespace agg
 		}
 	}
 
-	void AggApplication::OnLButtonUp(int x, int y, WPARAM wParam) {
+	void Widget::OnLButtonUp(int x, int y, WPARAM wParam) {
 		::ReleaseCapture();
 		m_specific->m_cur_x = x;
 		if (flip_y()) {
@@ -634,7 +626,7 @@ namespace agg
 		on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 	}
 
-	void AggApplication::OnRButtonDown(int x, int y, WPARAM wParam) {
+	void Widget::OnRButtonDown(int x, int y, WPARAM wParam) {
 		::SetCapture(m_specific->m_hwnd);
 		m_specific->m_cur_x = x;
 		if (flip_y()) {
@@ -646,7 +638,7 @@ namespace agg
 		on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 	}
 
-	void AggApplication::OnRButtonUp(int x, int y, WPARAM wParam) {
+	void Widget::OnRButtonUp(int x, int y, WPARAM wParam) {
 		::ReleaseCapture();
 		m_specific->m_cur_x = x;
 		if (flip_y()) {
@@ -658,7 +650,7 @@ namespace agg
 		on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 	}
 
-	void AggApplication::OnMouseMove(int x, int y, WPARAM wParam) {
+	void Widget::OnMouseMove(int x, int y, WPARAM wParam) {
 		m_specific->m_cur_x = x;
 		if (flip_y()) {
 			m_specific->m_cur_y = rbuf_window().height() - y;
@@ -677,13 +669,13 @@ namespace agg
 		}
 	}
 
-	void AggApplication::OnChar(WPARAM wParam) {
+	void Widget::OnChar(WPARAM wParam) {
 		if (m_specific->m_last_translated_key == 0) {
 			on_key(m_specific->m_cur_x, m_specific->m_cur_y, wParam, m_specific->m_input_flags);
 		}
 	}
 
-	void AggApplication::OnKeyDown(WPARAM wParam) {
+	void Widget::OnKeyDown(WPARAM wParam) {
 		m_specific->m_last_translated_key = 0;
 		switch (wParam) {
 		case VK_CONTROL:
@@ -723,8 +715,8 @@ namespace agg
 				break;
 
 			case key_f2:
-				copy_window_to_img(agg::AggApplication::max_images - 1);
-				save_img(agg::AggApplication::max_images - 1, "screenshot");
+				copy_window_to_img(agg::Widget::max_images - 1);
+				save_img(agg::Widget::max_images - 1, "screenshot");
 				break;
 			}
 
@@ -744,7 +736,7 @@ namespace agg
 		}
 	}
 
-	void AggApplication::OnKeyUp(WPARAM wParam) {
+	void Widget::OnKeyUp(WPARAM wParam) {
 		m_specific->m_last_translated_key = 0;
 		switch (wParam) {
 		case VK_CONTROL:
@@ -756,8 +748,8 @@ namespace agg
 		}
 	}
 
-    AggApplication::AggApplication(pix_format_e format, bool flip_y) :
-        m_specific(new platform_specific(format, flip_y)),
+    Widget::Widget(pix_format_e format, bool flip_y) :
+        m_specific(new WidgeImp(format, flip_y)),
         m_format(format),
         m_bpp(m_specific->m_bpp),
         m_window_flags(0),
@@ -771,7 +763,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    AggApplication::~AggApplication()
+    Widget::~Widget()
     {
         delete m_specific;
     }
@@ -779,7 +771,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void AggApplication::caption(const char* cap)
+    void Widget::caption(const char* cap)
     {
         strcpy(m_caption, cap);
         if(m_specific->m_hwnd)
@@ -789,13 +781,13 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void AggApplication::start_timer()
+    void Widget::start_timer()
     {
         ::QueryPerformanceCounter(&(m_specific->m_sw_start));
     }
 
     //------------------------------------------------------------------------
-    double AggApplication::elapsed_time() const
+    double Widget::elapsed_time() const
     {
         LARGE_INTEGER stop;
         ::QueryPerformanceCounter(&stop);
@@ -804,7 +796,7 @@ namespace agg
                       double(m_specific->m_sw_freq.QuadPart);
     }
 
-    void* AggApplication::raw_display_handler()
+    void* Widget::raw_display_handler()
     {
         return m_specific->m_current_dc;
     }
@@ -814,11 +806,11 @@ namespace agg
     LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         void* user_data = reinterpret_cast<void*>(::GetWindowLong(hWnd, GWL_USERDATA));
-        AggApplication* app = 0;
+        Widget* app = 0;
 
         if(user_data)
         {
-            app = reinterpret_cast<AggApplication*>(user_data);
+            app = reinterpret_cast<Widget*>(user_data);
         }
 
         if(app == 0)
@@ -902,14 +894,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void AggApplication::message(const char* msg)
+    void Widget::message(const char* msg)
     {
         ::MessageBox(m_specific->m_hwnd, msg, "AGG Message", MB_OK);
     }
 
 
     //------------------------------------------------------------------------
-    bool AggApplication::init(unsigned width, unsigned height, unsigned flags)
+    bool Widget::init(unsigned width, unsigned height, unsigned flags)
     {
         if(m_specific->m_sys_format == pix_format_undefined)
         {
@@ -981,7 +973,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    int AggApplication::run()
+    int Widget::run()
     {
         MSG msg;
 
@@ -1018,17 +1010,17 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    const char* AggApplication::img_ext() const { return ".bmp"; }
+    const char* Widget::img_ext() const { return ".bmp"; }
 
 
     //------------------------------------------------------------------------
-    const char* AggApplication::full_file_name(const char* file_name)
+    const char* Widget::full_file_name(const char* file_name)
     {
         return file_name;
     }
 
     //------------------------------------------------------------------------
-    bool AggApplication::load_img(unsigned idx, const char* file)
+    bool Widget::load_img(unsigned idx, const char* file)
     {
         if(idx < max_images)
         {
@@ -1047,7 +1039,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool AggApplication::save_img(unsigned idx, const char* file)
+    bool Widget::save_img(unsigned idx, const char* file)
     {
         if(idx < max_images)
         {
@@ -1066,7 +1058,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool AggApplication::create_img(unsigned idx, unsigned width, unsigned height)
+    bool Widget::create_img(unsigned idx, unsigned width, unsigned height)
     {
         if(idx < max_images)
         {
@@ -1086,7 +1078,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void AggApplication::force_redraw()
+    void Widget::force_redraw()
     {
         m_specific->m_redraw_flag = true;
         ::InvalidateRect(m_specific->m_hwnd, 0, FALSE);
@@ -1095,7 +1087,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void AggApplication::update_window()
+    void Widget::update_window()
     {
         HDC dc = ::GetDC(m_specific->m_hwnd);
         m_specific->display_pmap(dc, &m_rbuf_window);

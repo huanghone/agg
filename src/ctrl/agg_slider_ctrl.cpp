@@ -32,7 +32,7 @@ namespace agg
     //------------------------------------------------------------------------
     slider_ctrl_impl::slider_ctrl_impl(double x1, double y1, 
                                        double x2, double y2, bool flip_y) :
-        ctrl(x1, y1, x2, y2, flip_y),
+        View(x1, y1, x2, y2, flip_y),
         m_border_width(1.0),
         m_border_extra((y2 - y1) / 2),
         m_text_thickness(1.0),

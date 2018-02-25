@@ -32,12 +32,12 @@ namespace agg
 {
 
     //--------------------------------------------------------------------ctrl
-    class ctrl
+    class View
     {
     public:
         //--------------------------------------------------------------------
-        virtual ~ctrl() {}
-        ctrl(double x1, double y1, double x2, double y2, bool flip_y) :
+        virtual ~View() {}
+        View(double x1, double y1, double x2, double y2, bool flip_y) :
             m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), 
             m_flip_y(flip_y),
             m_mtx(0)
@@ -73,8 +73,8 @@ namespace agg
         double scale() const { return m_mtx ? m_mtx->scale() : 1.0; }
 
     private:
-        ctrl(const ctrl&);
-        const ctrl& operator = (const ctrl&);
+        View(const View&);
+        const View& operator = (const View&);
 
     protected:
         double m_x1;
