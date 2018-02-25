@@ -62,8 +62,8 @@ namespace agg
         unsigned      m_bpp;
         unsigned      m_sys_bpp;
         HWND          m_hwnd;
-        pixel_map     m_pmap_window;
-        pixel_map     m_pmap_img[platform_support::max_images];
+        Pixelmap     m_pmap_window;
+        Pixelmap     m_pmap_img[AggApplication::max_images];
         unsigned      m_keymap[256];
         unsigned      m_last_translated_key;
         int           m_cur_x;
@@ -318,7 +318,7 @@ namespace agg
         }
         else
         {
-            pixel_map pmap_tmp;
+            Pixelmap pmap_tmp;
             pmap_tmp.create(m_pmap_window.width(), 
                             m_pmap_window.height(),
                             org_e(m_sys_bpp));
@@ -347,7 +347,7 @@ namespace agg
             return m_pmap_img[idx].save_as_bmp(fn);
         }
 
-        pixel_map pmap_tmp;
+        Pixelmap pmap_tmp;
         pmap_tmp.create(m_pmap_img[idx].width(), 
                           m_pmap_img[idx].height(),
                           org_e(m_sys_bpp));
@@ -370,7 +370,7 @@ namespace agg
     bool platform_specific::load_pmap(const char* fn, unsigned idx, 
                                       rendering_buffer* dst)
     {
-        pixel_map pmap_tmp;
+        Pixelmap pmap_tmp;
         if(!pmap_tmp.load_from_bmp(fn)) return false;
 
         rendering_buffer rbuf_tmp;
@@ -559,8 +559,204 @@ namespace agg
 
 
 
-    //------------------------------------------------------------------------
-    platform_support::platform_support(pix_format_e format, bool flip_y) :
+	//------------------------------------------------------------------------
+	static unsigned get_key_flags(int wflags) {
+		unsigned flags = 0;
+		if (wflags & MK_LBUTTON) flags |= mouse_left;
+		if (wflags & MK_RBUTTON) flags |= mouse_right;
+		if (wflags & MK_SHIFT)   flags |= kbd_shift;
+		if (wflags & MK_CONTROL) flags |= kbd_ctrl;
+		return flags;
+	}
+
+	void AggApplication::OnSize(unsigned width, unsigned height) {
+		m_specific->create_pmap(width, height, &rbuf_window());
+		trans_affine_resizing(width, height);
+		on_resize(width, height);
+		force_redraw();
+	}
+
+	void AggApplication::OnPaint() {
+		HWND hwnd = m_specific->m_hwnd;
+		PAINTSTRUCT ps;
+		HDC paintDC = ::BeginPaint(hwnd, &ps);
+		m_specific->m_current_dc = paintDC;
+		if (m_specific->m_redraw_flag) {
+			on_draw();
+			m_specific->m_redraw_flag = false;
+		}
+		m_specific->display_pmap(paintDC, &rbuf_window());
+		on_post_draw(paintDC);
+		m_specific->m_current_dc = 0;
+		::EndPaint(hwnd, &ps);
+	}
+
+	void AggApplication::OnLButtonDown(int x, int y, WPARAM wParam) {
+		::SetCapture(m_specific->m_hwnd);
+		m_specific->m_cur_x = x;
+		if (flip_y()) {
+			m_specific->m_cur_y = rbuf_window().height() - y;
+		}	else {
+			m_specific->m_cur_y = y;
+		}
+		m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
+
+		m_ctrls.set_cur(m_specific->m_cur_x, m_specific->m_cur_y);
+		if (m_ctrls.on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y)) {
+			on_ctrl_change();
+			force_redraw();
+		}	else {
+			if (m_ctrls.in_rect(m_specific->m_cur_x, m_specific->m_cur_y)) {
+				if (m_ctrls.set_cur(m_specific->m_cur_x, m_specific->m_cur_y)) {
+					on_ctrl_change();
+					force_redraw();
+				}
+			} else {
+				on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+			}
+		}
+	}
+
+	void AggApplication::OnLButtonUp(int x, int y, WPARAM wParam) {
+		::ReleaseCapture();
+		m_specific->m_cur_x = x;
+		if (flip_y()) {
+			m_specific->m_cur_y = rbuf_window().height() - y;
+		} else {
+			m_specific->m_cur_y = y;
+		}
+		m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
+
+		if (m_ctrls.on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y)) {
+			on_ctrl_change();
+			force_redraw();
+		}
+		on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	}
+
+	void AggApplication::OnRButtonDown(int x, int y, WPARAM wParam) {
+		::SetCapture(m_specific->m_hwnd);
+		m_specific->m_cur_x = x;
+		if (flip_y()) {
+			m_specific->m_cur_y = rbuf_window().height() - y;
+		} else {
+			m_specific->m_cur_y = y;
+		}
+		m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
+		on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	}
+
+	void AggApplication::OnRButtonUp(int x, int y, WPARAM wParam) {
+		::ReleaseCapture();
+		m_specific->m_cur_x = x;
+		if (flip_y()) {
+			m_specific->m_cur_y = y;
+		} else {
+			m_specific->m_cur_y = y;
+		}
+		m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
+		on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	}
+
+	void AggApplication::OnMouseMove(int x, int y, WPARAM wParam) {
+		m_specific->m_cur_x = x;
+		if (flip_y()) {
+			m_specific->m_cur_y = rbuf_window().height() - y;
+		}	else {
+			m_specific->m_cur_y = y;
+		}
+		m_specific->m_input_flags = get_key_flags(wParam);
+
+		if (m_ctrls.on_mouse_move(m_specific->m_cur_x, m_specific->m_cur_y, (m_specific->m_input_flags & mouse_left) != 0)) {
+			on_ctrl_change();
+			force_redraw();
+		}	else {
+			if (!m_ctrls.in_rect(m_specific->m_cur_x, m_specific->m_cur_y)) {
+				on_mouse_move(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+			}
+		}
+	}
+
+	void AggApplication::OnChar(WPARAM wParam) {
+		if (m_specific->m_last_translated_key == 0) {
+			on_key(m_specific->m_cur_x, m_specific->m_cur_y, wParam, m_specific->m_input_flags);
+		}
+	}
+
+	void AggApplication::OnKeyDown(WPARAM wParam) {
+		m_specific->m_last_translated_key = 0;
+		switch (wParam) {
+		case VK_CONTROL:
+			m_specific->m_input_flags |= kbd_ctrl;
+			break;
+
+		case VK_SHIFT:
+			m_specific->m_input_flags |= kbd_shift;
+			break;
+
+		default:
+			m_specific->translate(wParam);
+			break;
+		}
+
+		if (m_specific->m_last_translated_key) {
+			bool left = false;
+			bool up = false;
+			bool right = false;
+			bool down = false;
+
+			switch (m_specific->m_last_translated_key) {
+			case key_left:
+				left = true;
+				break;
+
+			case key_up:
+				up = true;
+				break;
+
+			case key_right:
+				right = true;
+				break;
+
+			case key_down:
+				down = true;
+				break;
+
+			case key_f2:
+				copy_window_to_img(agg::AggApplication::max_images - 1);
+				save_img(agg::AggApplication::max_images - 1, "screenshot");
+				break;
+			}
+
+			if (window_flags() & window_process_all_keys) {
+				on_key(m_specific->m_cur_x,
+					m_specific->m_cur_y,
+					m_specific->m_last_translated_key,
+					m_specific->m_input_flags);
+			} else {
+				if (m_ctrls.on_arrow_keys(left, right, down, up)) {
+					on_ctrl_change();
+					force_redraw();
+				} else {
+					on_key(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_last_translated_key, m_specific->m_input_flags);
+				}
+			}
+		}
+	}
+
+	void AggApplication::OnKeyUp(WPARAM wParam) {
+		m_specific->m_last_translated_key = 0;
+		switch (wParam) {
+		case VK_CONTROL:
+			m_specific->m_input_flags &= ~kbd_ctrl;
+			break;
+		case VK_SHIFT:
+			m_specific->m_input_flags &= ~kbd_shift;
+			break;
+		}
+	}
+
+    AggApplication::AggApplication(pix_format_e format, bool flip_y) :
         m_specific(new platform_specific(format, flip_y)),
         m_format(format),
         m_bpp(m_specific->m_bpp),
@@ -575,7 +771,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    platform_support::~platform_support()
+    AggApplication::~AggApplication()
     {
         delete m_specific;
     }
@@ -583,7 +779,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_support::caption(const char* cap)
+    void AggApplication::caption(const char* cap)
     {
         strcpy(m_caption, cap);
         if(m_specific->m_hwnd)
@@ -593,13 +789,13 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void platform_support::start_timer()
+    void AggApplication::start_timer()
     {
         ::QueryPerformanceCounter(&(m_specific->m_sw_start));
     }
 
     //------------------------------------------------------------------------
-    double platform_support::elapsed_time() const
+    double AggApplication::elapsed_time() const
     {
         LARGE_INTEGER stop;
         ::QueryPerformanceCounter(&stop);
@@ -608,21 +804,7 @@ namespace agg
                       double(m_specific->m_sw_freq.QuadPart);
     }
 
-
-
-    //------------------------------------------------------------------------
-    static unsigned get_key_flags(int wflags)
-    {
-        unsigned flags = 0;
-        if(wflags & MK_LBUTTON) flags |= mouse_left;
-        if(wflags & MK_RBUTTON) flags |= mouse_right;
-        if(wflags & MK_SHIFT)   flags |= kbd_shift;
-        if(wflags & MK_CONTROL) flags |= kbd_ctrl;
-        return flags;
-    }
-
-
-    void* platform_support::raw_display_handler()
+    void* AggApplication::raw_display_handler()
     {
         return m_specific->m_current_dc;
     }
@@ -631,16 +813,12 @@ namespace agg
     //------------------------------------------------------------------------
     LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        PAINTSTRUCT ps;
-        HDC paintDC;
-
-
         void* user_data = reinterpret_cast<void*>(::GetWindowLong(hWnd, GWL_USERDATA));
-        platform_support* app = 0;
+        AggApplication* app = 0;
 
         if(user_data)
         {
-            app = reinterpret_cast<platform_support*>(user_data);
+            app = reinterpret_cast<AggApplication*>(user_data);
         }
 
         if(app == 0)
@@ -657,328 +835,60 @@ namespace agg
         app->m_specific->m_current_dc = dc;
         LRESULT ret = 0;
 
-        switch(msg) 
-        {
-        //--------------------------------------------------------------------
+        switch(msg) {
         case WM_CREATE:
             break;
-        
-        //--------------------------------------------------------------------
         case WM_SIZE:
-            app->m_specific->create_pmap(LOWORD(lParam), 
-                                         HIWORD(lParam),
-                                         &app->rbuf_window());
-
-            app->trans_affine_resizing(LOWORD(lParam), HIWORD(lParam));
-            app->on_resize(LOWORD(lParam), HIWORD(lParam));
-            app->force_redraw();
-            break;
-        
-        //--------------------------------------------------------------------
+					app->OnSize(LOWORD(lParam), HIWORD(lParam));
+          break;
         case WM_ERASEBKGND:
-            break;
-        
-        //--------------------------------------------------------------------
+					break;
         case WM_LBUTTONDOWN:
-            ::SetCapture(app->m_specific->m_hwnd);
-            app->m_specific->m_cur_x = int16(LOWORD(lParam));
-            if(app->flip_y())
-            {
-                app->m_specific->m_cur_y = app->rbuf_window().height() - int16(HIWORD(lParam));
-            }
-            else
-            {
-                app->m_specific->m_cur_y = int16(HIWORD(lParam));
-            }
-            app->m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
-            
-            app->m_ctrls.set_cur(app->m_specific->m_cur_x, 
-                                 app->m_specific->m_cur_y);
-            if(app->m_ctrls.on_mouse_button_down(app->m_specific->m_cur_x, 
-                                                 app->m_specific->m_cur_y))
-            {
-                app->on_ctrl_change();
-                app->force_redraw();
-            }
-            else
-            {
-                if(app->m_ctrls.in_rect(app->m_specific->m_cur_x, 
-                                        app->m_specific->m_cur_y))
-                {
-                    if(app->m_ctrls.set_cur(app->m_specific->m_cur_x, 
-                                            app->m_specific->m_cur_y))
-                    {
-                        app->on_ctrl_change();
-                        app->force_redraw();
-                    }
-                }
-                else
-                {
-                    app->on_mouse_button_down(app->m_specific->m_cur_x, 
-                                              app->m_specific->m_cur_y, 
-                                              app->m_specific->m_input_flags);
-                }
-            }
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
-
-        //--------------------------------------------------------------------
+					app->OnLButtonDown(LOWORD(lParam), HIWORD(lParam), wParam);
+          break;
         case WM_LBUTTONUP:
-            ::ReleaseCapture();
-            app->m_specific->m_cur_x = int16(LOWORD(lParam));
-            if(app->flip_y())
-            {
-                app->m_specific->m_cur_y = app->rbuf_window().height() - int16(HIWORD(lParam));
-            }
-            else
-            {
-                app->m_specific->m_cur_y = int16(HIWORD(lParam));
-            }
-            app->m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
-
-            if(app->m_ctrls.on_mouse_button_up(app->m_specific->m_cur_x, 
-                                               app->m_specific->m_cur_y))
-            {
-                app->on_ctrl_change();
-                app->force_redraw();
-            }
-            app->on_mouse_button_up(app->m_specific->m_cur_x, 
-                                    app->m_specific->m_cur_y, 
-                                    app->m_specific->m_input_flags);
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
-
-
-        //--------------------------------------------------------------------
+					app->OnLButtonUp(LOWORD(lParam), HIWORD(lParam), wParam);
+          break;
         case WM_RBUTTONDOWN:
-            ::SetCapture(app->m_specific->m_hwnd);
-            app->m_specific->m_cur_x = int16(LOWORD(lParam));
-            if(app->flip_y())
-            {
-                app->m_specific->m_cur_y = app->rbuf_window().height() - int16(HIWORD(lParam));
-            }
-            else
-            {
-                app->m_specific->m_cur_y = int16(HIWORD(lParam));
-            }
-            app->m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
-            app->on_mouse_button_down(app->m_specific->m_cur_x, 
-                                      app->m_specific->m_cur_y, 
-                                      app->m_specific->m_input_flags);
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
-
-        //--------------------------------------------------------------------
+					app->OnRButtonDown(LOWORD(lParam), HIWORD(lParam), wParam);
+					break;
         case WM_RBUTTONUP:
-            ::ReleaseCapture();
-            app->m_specific->m_cur_x = int16(LOWORD(lParam));
-            if(app->flip_y())
-            {
-                app->m_specific->m_cur_y = app->rbuf_window().height() - int16(HIWORD(lParam));
-            }
-            else
-            {
-                app->m_specific->m_cur_y = int16(HIWORD(lParam));
-            }
-            app->m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
-            app->on_mouse_button_up(app->m_specific->m_cur_x, 
-                                    app->m_specific->m_cur_y, 
-                                    app->m_specific->m_input_flags);
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
+					app->OnRButtonUp(LOWORD(lParam), HIWORD(lParam), wParam);
+          break;
 
         //--------------------------------------------------------------------
         case WM_MOUSEMOVE:
-            app->m_specific->m_cur_x = int16(LOWORD(lParam));
-            if(app->flip_y())
-            {
-                app->m_specific->m_cur_y = app->rbuf_window().height() - int16(HIWORD(lParam));
-            }
-            else
-            {
-                app->m_specific->m_cur_y = int16(HIWORD(lParam));
-            }
-            app->m_specific->m_input_flags = get_key_flags(wParam);
-
-
-            if(app->m_ctrls.on_mouse_move(
-                app->m_specific->m_cur_x, 
-                app->m_specific->m_cur_y,
-                (app->m_specific->m_input_flags & mouse_left) != 0))
-            {
-                app->on_ctrl_change();
-                app->force_redraw();
-            }
-            else
-            {
-                if(!app->m_ctrls.in_rect(app->m_specific->m_cur_x, 
-                                         app->m_specific->m_cur_y))
-                {
-                    app->on_mouse_move(app->m_specific->m_cur_x, 
-                                       app->m_specific->m_cur_y, 
-                                       app->m_specific->m_input_flags);
-                }
-            }
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
+					app->OnMouseMove(LOWORD(lParam), HIWORD(lParam), wParam);
+          break;
 
         //--------------------------------------------------------------------
         case WM_SYSKEYDOWN:
         case WM_KEYDOWN:
-            app->m_specific->m_last_translated_key = 0;
-            switch(wParam) 
-            {
-                case VK_CONTROL:
-                    app->m_specific->m_input_flags |= kbd_ctrl;
-                    break;
-
-                case VK_SHIFT:
-                    app->m_specific->m_input_flags |= kbd_shift;
-                    break;
-
-                default:
-                    app->m_specific->translate(wParam);
-                    break;
-            }
-        
-            if(app->m_specific->m_last_translated_key)
-            {
-                bool left  = false;
-                bool up    = false;
-                bool right = false;
-                bool down  = false;
-
-                switch(app->m_specific->m_last_translated_key)
-                {
-                case key_left:
-                    left = true;
-                    break;
-
-                case key_up:
-                    up = true;
-                    break;
-
-                case key_right:
-                    right = true;
-                    break;
-
-                case key_down:
-                    down = true;
-                    break;
-
-                case key_f2:                        
-                    app->copy_window_to_img(agg::platform_support::max_images - 1);
-                    app->save_img(agg::platform_support::max_images - 1, "screenshot");
-                    break;
-                }
-
-                if(app->window_flags() & window_process_all_keys)
-                {
-                    app->on_key(app->m_specific->m_cur_x,
-                                app->m_specific->m_cur_y,
-                                app->m_specific->m_last_translated_key,
-                                app->m_specific->m_input_flags);
-                }
-                else
-                {
-                    if(app->m_ctrls.on_arrow_keys(left, right, down, up))
-                    {
-                        app->on_ctrl_change();
-                        app->force_redraw();
-                    }
-                    else
-                    {
-                        app->on_key(app->m_specific->m_cur_x,
-                                    app->m_specific->m_cur_y,
-                                    app->m_specific->m_last_translated_key,
-                                    app->m_specific->m_input_flags);
-                    }
-                }
-            }
-/*
-            if(!app->wait_mode())
-            {
-                app->on_idle();
-            }
-*/
-            break;
+					app->OnKeyDown(wParam);
+          break;
 
         //--------------------------------------------------------------------
         case WM_SYSKEYUP:
         case WM_KEYUP:
-            app->m_specific->m_last_translated_key = 0;
-            switch(wParam) 
-            {
-                case VK_CONTROL:
-                    app->m_specific->m_input_flags &= ~kbd_ctrl;
-                    break;
-
-                case VK_SHIFT:
-                    app->m_specific->m_input_flags &= ~kbd_shift;
-                    break;
-            }
-            break;
+					app->OnKeyUp(wParam);
+          break;
 
         //--------------------------------------------------------------------
         case WM_CHAR:
         case WM_SYSCHAR:
-            if(app->m_specific->m_last_translated_key == 0)
-            {
-                app->on_key(app->m_specific->m_cur_x,
-                            app->m_specific->m_cur_y,
-                            wParam,
-                            app->m_specific->m_input_flags);
-            }
-            break;
+					app->OnChar(wParam);
+          break;
         
-        //--------------------------------------------------------------------
         case WM_PAINT:
-            paintDC = ::BeginPaint(hWnd, &ps);
-            app->m_specific->m_current_dc = paintDC;
-            if(app->m_specific->m_redraw_flag)
-            {
-                app->on_draw();
-                app->m_specific->m_redraw_flag = false;
-            }
-            app->m_specific->display_pmap(paintDC, &app->rbuf_window());
-            app->on_post_draw(paintDC);
-            app->m_specific->m_current_dc = 0;
-            ::EndPaint(hWnd, &ps);
-            break;
-        
-        //--------------------------------------------------------------------
+					app->OnPaint();
+					break;
         case WM_COMMAND:
             break;
         
         //--------------------------------------------------------------------
         case WM_DESTROY:
-            ::PostQuitMessage(0);
-            break;
+					app->OnDestory();
+					break;
         
         //--------------------------------------------------------------------
         default:
@@ -992,14 +902,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_support::message(const char* msg)
+    void AggApplication::message(const char* msg)
     {
         ::MessageBox(m_specific->m_hwnd, msg, "AGG Message", MB_OK);
     }
 
 
     //------------------------------------------------------------------------
-    bool platform_support::init(unsigned width, unsigned height, unsigned flags)
+    bool AggApplication::init(unsigned width, unsigned height, unsigned flags)
     {
         if(m_specific->m_sys_format == pix_format_undefined)
         {
@@ -1071,7 +981,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    int platform_support::run()
+    int AggApplication::run()
     {
         MSG msg;
 
@@ -1108,17 +1018,17 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    const char* platform_support::img_ext() const { return ".bmp"; }
+    const char* AggApplication::img_ext() const { return ".bmp"; }
 
 
     //------------------------------------------------------------------------
-    const char* platform_support::full_file_name(const char* file_name)
+    const char* AggApplication::full_file_name(const char* file_name)
     {
         return file_name;
     }
 
     //------------------------------------------------------------------------
-    bool platform_support::load_img(unsigned idx, const char* file)
+    bool AggApplication::load_img(unsigned idx, const char* file)
     {
         if(idx < max_images)
         {
@@ -1137,7 +1047,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool platform_support::save_img(unsigned idx, const char* file)
+    bool AggApplication::save_img(unsigned idx, const char* file)
     {
         if(idx < max_images)
         {
@@ -1156,7 +1066,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool platform_support::create_img(unsigned idx, unsigned width, unsigned height)
+    bool AggApplication::create_img(unsigned idx, unsigned width, unsigned height)
     {
         if(idx < max_images)
         {
@@ -1176,7 +1086,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_support::force_redraw()
+    void AggApplication::force_redraw()
     {
         m_specific->m_redraw_flag = true;
         ::InvalidateRect(m_specific->m_hwnd, 0, FALSE);
@@ -1185,25 +1095,12 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void platform_support::update_window()
+    void AggApplication::update_window()
     {
         HDC dc = ::GetDC(m_specific->m_hwnd);
         m_specific->display_pmap(dc, &m_rbuf_window);
         ::ReleaseDC(m_specific->m_hwnd, dc);
     }
-
-
-    //------------------------------------------------------------------------
-    void platform_support::on_init() {}
-    void platform_support::on_resize(int sx, int sy) {}
-    void platform_support::on_idle() {}
-    void platform_support::on_mouse_move(int x, int y, unsigned flags) {}
-    void platform_support::on_mouse_button_down(int x, int y, unsigned flags) {}
-    void platform_support::on_mouse_button_up(int x, int y, unsigned flags) {}
-    void platform_support::on_key(int x, int y, unsigned key, unsigned flags) {}
-    void platform_support::on_ctrl_change() {}
-    void platform_support::on_draw() {}
-    void platform_support::on_post_draw(void* raw_handler) {}
 }
 
 

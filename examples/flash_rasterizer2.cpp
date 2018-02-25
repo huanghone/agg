@@ -248,7 +248,7 @@ namespace agg
 
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
 
 public:
@@ -260,7 +260,7 @@ public:
 
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_point_idx(-1)
     {
         m_gamma.gamma(2.0);

@@ -88,7 +88,7 @@ void make_gb_poly(agg::path_storage& ps);
 void make_arrows(agg::path_storage& ps);
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     agg::rbox_ctrl<agg::rgba8> m_polygons;
     agg::rbox_ctrl<agg::rgba8> m_operation;
@@ -114,7 +114,7 @@ public:
     }
     
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_polygons (5.0,     5.0, 5.0+205.0,  110.0,  !flip_y),
         m_operation(555.0,   5.0, 555.0+80.0, 55.0,  !flip_y),
         m_alpha_buf(0),

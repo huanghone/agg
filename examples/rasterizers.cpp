@@ -21,7 +21,7 @@ enum flip_y_e { flip_y = true };
 
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     double m_x[3];
     double m_y[3];
@@ -38,7 +38,7 @@ class the_application : public agg::platform_support
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_idx(-1),
         m_gamma(130 + 10.0, 10.0 + 4.0, 130 + 150.0, 10.0 + 8.0 + 4.0, !flip_y),
         m_alpha(130 + 150.0 + 10.0, 10.0 + 4.0, 500 - 10.0, 10.0 + 8.0 + 4.0, !flip_y),

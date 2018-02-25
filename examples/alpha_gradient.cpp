@@ -26,7 +26,7 @@ typedef pixfmt_type::color_type color_type;
 typedef color_type::value_type color_value_type;
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     double m_x[3];
     double m_y[3];
@@ -38,7 +38,7 @@ class the_application : public agg::platform_support
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_idx(-1),
         m_alpha(2,  2,  200, 30,  6, !flip_y)
     {

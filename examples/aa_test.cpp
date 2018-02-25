@@ -204,14 +204,14 @@ void fill_color_array(ColorArrayT& array,
 
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     gamma_lut_type              m_gamma;
     agg::slider_ctrl<agg::rgba> m_slider_gamma;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_gamma(1.0),
         m_slider_gamma(3, 3,    480-3, 8,    !flip_y)
     {

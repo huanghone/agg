@@ -45,7 +45,7 @@ void bezier4_point(double x1, double y1, double x2, double y2,
 
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     agg::rgba8 m_ctrl_color;
     agg::bezier_ctrl<agg::rgba8> m_curve1;
@@ -71,7 +71,7 @@ public:
 
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
         m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
         m_approximation_scale(5.0,    17+5.0, 240.0,    17+12.0,  !flip_y),

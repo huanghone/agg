@@ -24,7 +24,7 @@
 enum flip_y_e { flip_y = true };
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     agg::rbox_ctrl<agg::rgba8>    m_method;
     agg::slider_ctrl<agg::rgba8>  m_radius;
@@ -49,7 +49,7 @@ class the_application : public agg::platform_support
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_method     (10.0, 10.0, 130.0, 70.0, !flip_y),
         m_radius     (130 + 10.0, 10.0 + 4.0, 130 + 300.0, 10.0 + 8.0 + 4.0, !flip_y),
         m_shadow_ctrl(4),

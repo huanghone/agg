@@ -28,7 +28,7 @@ enum flip_y_e { flip_y = true };
 
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
 public:
     typedef agg::renderer_base<pixfmt> renderer_base;
@@ -40,7 +40,7 @@ public:
     int                          m_flip;
 
     the_application(agg::pix_format_e format, bool flip_y) :
-        agg::platform_support(format, flip_y),
+        agg::AggApplication(format, flip_y),
         m_poly(6, 5.0),
         m_num_points(5.0, 5.0, 340.0, 12.0, !flip_y),
         m_close     (350, 5.0,  "Close", !flip_y),

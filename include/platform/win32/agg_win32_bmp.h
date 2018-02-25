@@ -42,11 +42,11 @@ namespace agg
         org_color64 = 64
     };
 
-    class pixel_map
+    class Pixelmap
     {
     public:
-        ~pixel_map();
-        pixel_map();
+        ~Pixelmap();
+        Pixelmap();
 
     public:
         void        destroy();
@@ -54,7 +54,7 @@ namespace agg
                            unsigned height, 
                            org_e    org,
                            unsigned clear_val=256);
-        HBITMAP     create_dib_section(HDC h_dc,
+        HBITMAP     CreateDIBSection(HDC h_dc,
                                        unsigned width, 
                                        unsigned height, 
                                        org_e    org,
@@ -99,8 +99,8 @@ namespace agg
         static unsigned calc_row_len(unsigned width, unsigned bits_per_pixel);
         
     private:
-        pixel_map(const pixel_map&);
-        const pixel_map& operator = (const pixel_map&);
+        Pixelmap(const Pixelmap&);
+        const Pixelmap& operator = (const Pixelmap&);
         void create_from_bmp(BITMAPINFO *bmp);
         
         HBITMAP create_dib_section_from_args(HDC h_dc,

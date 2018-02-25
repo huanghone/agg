@@ -141,7 +141,7 @@ static char_type text[] =
 bool text_flip = false;
 
 
-class the_application : public agg::platform_support
+class the_application : public agg::AggApplication
 {
     typedef agg::gamma_lut<agg::int8u, agg::int16u, 8, 16> gamma_type;
     typedef agg::pixfmt_bgr24_gamma<gamma_type> pixfmt_type;
@@ -173,7 +173,7 @@ class the_application : public agg::platform_support
 
 public:
     the_application(HDC dc, agg::pix_format_e format, bool flip) :
-        agg::platform_support(format, flip),
+        agg::AggApplication(format, flip),
         m_ren_type     (5.0, 5.0, 5.0+150.0,   110.0,  !flip),
         m_height       (160, 10.0, 640-5.0,    18.0,   !flip),
         m_width        (160, 30.0, 640-5.0,    38.0,   !flip),
