@@ -85,8 +85,7 @@ protected:
 };
 
 template<class Rasterizer, class Scanline, class Renderer, class Ctrl> 
-void render_ctrl(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c)
-{
+void render_ctrl(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c) {
 	unsigned i;
 	for(i = 0; i < c.num_paths(); i++) {
 		ras.reset();
@@ -95,8 +94,6 @@ void render_ctrl(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c)
 	}
 }
 
-
-  //--------------------------------------------------------------------
 template<class Rasterizer, class Scanline, class Renderer, class Ctrl> 
 void render_ctrl_rs(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c) {
 	unsigned i;
@@ -120,27 +117,23 @@ public:
 	}
 
 	virtual bool on_mouse_button_down(double x, double y) override {
-		unsigned i;
-		for (i = 0; i < child_views_.size(); i++)
-		{
-			if (child_views_[i]->on_mouse_button_down(x, y)) return true;
+		for (auto view : child_views_) {
+			if (view->on_mouse_button_down(x, y)) return true;
 		}
 		return false;
 	}
 
 	virtual bool on_mouse_button_up(double x, double y) override {
-		unsigned i;
 		bool flag = false;
-		for (i = 0; i < child_views_.size(); i++) {
-			if (child_views_[i]->on_mouse_button_up(x, y)) flag = true;
+		for (auto view: child_views_) {
+			if (view->on_mouse_button_up(x, y)) flag = true;
 		}
 		return flag;
 	}
 
 	virtual bool on_mouse_move(double x, double y, bool button_flag) override {
-		unsigned i;
-		for (i = 0; i < child_views_.size(); i++) {
-			if (child_views_[i]->on_mouse_move(x, y, button_flag)) return true;
+		for (auto view : child_views_) {
+			if (view->on_mouse_move(x, y, button_flag)) return true;
 		}
 		return false;
 	}
@@ -150,6 +143,10 @@ public:
 			return child_views_[m_cur_ctrl]->on_arrow_keys(left, right, down, up);
 		}
 		return false;
+	}
+
+	View* GetViewForPoint(double x, double y) {
+		return NULL;
 	}
 
 	bool set_cur(double x, double y) {
