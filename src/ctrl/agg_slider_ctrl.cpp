@@ -30,7 +30,7 @@ namespace agg
 {
 
     //------------------------------------------------------------------------
-    slider_ctrl_impl::slider_ctrl_impl(double x1, double y1, 
+    SliderCtrlBase::SliderCtrlBase(double x1, double y1, 
                                        double x2, double y2, bool flip_y) :
         View(x1, y1, x2, y2, flip_y),
         m_border_width(1.0),
@@ -52,7 +52,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void slider_ctrl_impl::calc_box()
+    void SliderCtrlBase::calc_box()
     {
         m_xs1 = m_x1 + m_border_width;
         m_ys1 = m_y1 + m_border_width;
@@ -62,7 +62,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::normalize_value(bool preview_value_flag)
+    bool SliderCtrlBase::normalize_value(bool preview_value_flag)
     {
         bool ret = true;
         if(m_num_steps)
@@ -85,7 +85,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void slider_ctrl_impl::border_width(double t, double extra)
+    void SliderCtrlBase::border_width(double t, double extra)
     { 
         m_border_width = t; 
         m_border_extra = extra;
@@ -94,7 +94,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void slider_ctrl_impl::value(double value) 
+    void SliderCtrlBase::value(double value) 
     { 
         m_preview_value = (value - m_min) / (m_max - m_min); 
         if(m_preview_value > 1.0) m_preview_value = 1.0;
@@ -103,7 +103,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void slider_ctrl_impl::label(const char* fmt)
+    void SliderCtrlBase::label(const char* fmt)
     {
         m_label[0] = 0;
         if(fmt)
@@ -116,7 +116,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void slider_ctrl_impl::rewind(unsigned idx)
+    void SliderCtrlBase::rewind(unsigned idx)
     {
         m_idx = idx;
 
@@ -217,7 +217,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned slider_ctrl_impl::vertex(double* x, double* y)
+    unsigned SliderCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_line_to;
         switch(m_idx)
@@ -267,7 +267,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::in_rect(double x, double y) const
+    bool SliderCtrlBase::in_rect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
@@ -275,7 +275,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool SliderCtrlBase::on_mouse_button_down(double x, double y)
     {
         inverse_transform_xy(&x, &y);
 
@@ -293,7 +293,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool SliderCtrlBase::on_mouse_move(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         if(!button_flag)
@@ -315,7 +315,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::on_mouse_button_up(double, double)
+    bool SliderCtrlBase::on_mouse_button_up(double, double)
     {
         m_mouse_move = false;
         normalize_value(true);
@@ -324,7 +324,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool slider_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool SliderCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
     {
         double d = 0.005;
         if(m_num_steps)

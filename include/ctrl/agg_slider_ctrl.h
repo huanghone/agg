@@ -37,9 +37,9 @@
 
 namespace agg {
 
-class slider_ctrl_impl : public View {
+class SliderCtrlBase : public View {
 public:
-	slider_ctrl_impl(double x1, double y1, double x2, double y2, bool flip_y=false);
+	SliderCtrlBase(double x1, double y1, double x2, double y2, bool flip_y=false);
 
 	void border_width(double t, double extra=0.0);
 
@@ -99,10 +99,10 @@ private:
 
 };
 
-class SliderCtrl : public slider_ctrl_impl {
+class SliderCtrl : public SliderCtrlBase {
 public:
 	SliderCtrl(double x1, double y1, double x2, double y2, bool flip_y=false) :
-		slider_ctrl_impl(x1, y1, x2, y2, flip_y),
+		SliderCtrlBase(x1, y1, x2, y2, flip_y),
 		m_background_color(rgba(1.0, 0.9, 0.8)),
 		m_triangle_color(rgba(0.7, 0.6, 0.6)),
 		m_text_color(rgba(0.0, 0.0, 0.0)),

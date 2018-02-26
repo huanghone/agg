@@ -37,19 +37,23 @@ namespace agg {
 class View {
 public:
     //--------------------------------------------------------------------
-    virtual ~View() {}
-    View(double x1, double y1, double x2, double y2, bool flip_y) :
-        m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), 
-        m_flip_y(flip_y),
-        m_mtx(0)
-    {
-    }
+  virtual ~View() {}
+  View(double x1, double y1, double x2, double y2, bool flip_y) :
+      m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), 
+      m_flip_y(flip_y),
+      m_mtx(0)
+  {
+  }
 
 	void add(View& c) {
 		child_views_.push_back(&c);
 	}
 
-	virtual void Paint(Canvas& canvas) {}
+	virtual void Paint(Canvas& canvas) {
+		for (auto view : child_views_) {
+			view->Paint(canvas);
+		}
+	}
 
 	virtual bool in_rect(double x, double y) const { return true; }
 	virtual bool on_mouse_button_down(double x, double y) { return true; }
@@ -118,12 +122,6 @@ public:
 			if (view->in_rect(x, y)) return true;
 		}
 		return false;
-	}
-
-	virtual void Paint(Canvas& canvas) override {
-		for (auto view : child_views_) {
-			view->Paint(canvas);
-		}
 	}
 
 	virtual bool on_mouse_button_down(double x, double y) override {
