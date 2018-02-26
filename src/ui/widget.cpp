@@ -805,8 +805,14 @@ public:
     //------------------------------------------------------------------------
     LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        void* user_data = reinterpret_cast<void*>(::GetWindowLong(hWnd, GWL_USERDATA));
-        Widget* app = 0;
+			static int width, height;
+			void* user_data = reinterpret_cast<Widget*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+			Widget* app = 0;
+
+        //void* user_data = reinterpret_cast<void*>(::GetWindowLong(hWnd, GWL_USERDATA));
+        //Widget* app = 0;
+
+
 
         if(user_data)
         {
@@ -949,6 +955,7 @@ public:
             return false;
         }
 
+				::SetWindowLongPtr(m_specific->m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 
         RECT rct;
         ::GetClientRect(m_specific->m_hwnd, &rct);
@@ -960,7 +967,7 @@ public:
                      height + (height - (rct.bottom - rct.top)),
                      FALSE);
    
-        ::SetWindowLong(m_specific->m_hwnd, GWL_USERDATA, (LONG)this);
+        //::SetWindowLong(m_specific->m_hwnd, GWL_USERDATA, (LONG)this);
         m_specific->create_pmap(width, height, &m_rbuf_window);
         m_initial_width = width;
         m_initial_height = height;

@@ -8,8 +8,8 @@
 //
 //----------------------------------------------------------------------------
 
-#include "platform/win32/agg_win32_bmp.h"
-#include "agg_basics.h"
+#include "ui/agg_win32_bmp.h"
+#include "gfx/agg_basics.h"
 
 namespace agg
 {
