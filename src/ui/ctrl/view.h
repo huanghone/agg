@@ -22,8 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#ifndef AGG_CTRL_INCLUDED
-#define AGG_CTRL_INCLUDED
+#pragma once
 
 #include <vector>
 
@@ -36,7 +35,6 @@ namespace agg {
 
 class View {
 public:
-    //--------------------------------------------------------------------
   virtual ~View() {}
   View(double x1, double y1, double x2, double y2, bool flip_y) :
       m_x1(x1), m_y1(y1), m_x2(x2), m_y2(y2), 
@@ -180,6 +178,3 @@ private:
 };
 
 }
-
-
-#endif

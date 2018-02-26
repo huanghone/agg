@@ -448,7 +448,7 @@ public:
   // included into the basic AGG package do).
   // If you don't need a particular control to be scaled automatically 
   // call ctrl::no_transform() after adding.
-  void AddChildView(View& c) { m_ctrls.add(c); c.transform(m_resize_mtx); }
+  void AddChildView(View& c) { root_view_.add(c); c.transform(m_resize_mtx); }
 
   //--------------------------------------------------------------------
   // Auxiliary functions. trans_affine_resizing() modifier sets up the resizing 
@@ -532,7 +532,7 @@ public:
 
 public:
   WidgeImp* m_specific;
-  RootView m_ctrls;
+  RootView root_view_;
 
   // Sorry, I'm too tired to describe the private 
   // data membders. See the implementations for different

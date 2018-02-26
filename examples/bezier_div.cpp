@@ -636,15 +636,13 @@ public:
 
 		double aerr = 0;
 		for(i = 2; i < curve_points.size(); i++) {
-			double a1 = 
-				atan2(
-					curve_points[i-1].y - curve_points[i-2].y, 
-					curve_points[i-1].x - curve_points[i-2].x);
+			double a1 = atan2(
+				curve_points[i-1].y - curve_points[i-2].y,
+				curve_points[i-1].x - curve_points[i-2].x);
 
-			double a2 = 
-				atan2(
-					curve_points[i].y - curve_points[i-1].y, 
-					curve_points[i].x - curve_points[i-1].x);
+			double a2 = atan2(
+				curve_points[i].y - curve_points[i-1].y,
+				curve_points[i].x - curve_points[i-1].x);
 
 				double da = fabs(a1 - a2);
 				if(da >= agg::pi) da = 2*agg::pi - da;
@@ -760,7 +758,7 @@ public:
 
 		canvas.DrawPath(pt, agg::rgba8(0, 0, 0));
 
-		m_ctrls.Paint(canvas);
+		root_view_.Paint(canvas);
 	}
 
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {
