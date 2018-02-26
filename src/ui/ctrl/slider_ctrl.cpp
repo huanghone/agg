@@ -24,7 +24,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "ctrl/agg_slider_ctrl.h"
+#include "ui/ctrl/slider_ctrl.h"
 
 namespace agg
 {

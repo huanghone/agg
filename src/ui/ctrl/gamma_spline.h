@@ -25,8 +25,8 @@
 #ifndef AGG_GAMMA_SPLINE_INCLUDED
 #define AGG_GAMMA_SPLINE_INCLUDED
 
-#include "agg_basics.h"
-#include "agg_bspline.h"
+#include "gfx/agg_basics.h"
+#include "gfx/agg_bspline.h"
 
 namespace agg
 {

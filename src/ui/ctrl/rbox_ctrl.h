@@ -30,7 +30,7 @@
 #include "gfx/agg_gsv_text.h"
 #include "gfx/agg_trans_affine.h"
 #include "gfx/agg_color_rgba.h"
-#include "ui/ctrl/agg_ctrl.h"
+#include "ui/ctrl/view.h"
 
 namespace agg {
 

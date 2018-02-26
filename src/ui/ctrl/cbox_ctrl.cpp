@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include <string.h>
-#include "ctrl/agg_cbox_ctrl.h"
+#include "ui/ctrl/cbox_ctrl.h"
 
 
 namespace agg

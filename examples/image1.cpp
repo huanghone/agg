@@ -1,22 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "agg_rendering_buffer.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_ellipse.h"
-#include "agg_trans_affine.h"
-#include "agg_conv_transform.h"
-#include "agg_span_image_filter_rgb.h"
-#include "agg_span_image_filter_rgba.h"
-#include "agg_span_image_filter_gray.h"
-#include "agg_pixfmt_rgba.h"
-#include "agg_scanline_u.h"
-#include "agg_renderer_scanline.h"
-#include "agg_span_allocator.h"
-#include "agg_span_interpolator_linear.h"
-#include "agg_image_accessors.h"
-#include "ctrl/agg_slider_ctrl.h"
-#include "platform/agg_platform_support.h"
+#include "gfx/agg_rendering_buffer.h"
+#include "gfx/agg_rasterizer_scanline_aa.h"
+#include "gfx/agg_ellipse.h"
+#include "gfx/agg_trans_affine.h"
+#include "gfx/agg_conv_transform.h"
+#include "gfx/agg_span_image_filter_rgb.h"
+#include "gfx/agg_span_image_filter_rgba.h"
+#include "gfx/agg_span_image_filter_gray.h"
+#include "gfx/agg_pixfmt_rgba.h"
+#include "gfx/agg_scanline_u.h"
+#include "gfx/agg_renderer_scanline.h"
+#include "gfx/agg_span_allocator.h"
+#include "gfx/agg_span_interpolator_linear.h"
+#include "gfx/agg_image_accessors.h"
+#include "ui/ctrl/agg_slider_ctrl.h"
+#include "ui/widget.h"
 
 enum flip_y_e { flip_y = true };
 
@@ -26,8 +26,8 @@ enum flip_y_e { flip_y = true };
 
 class the_application : public agg::Widget
 {
-    agg::SliderCtrl<agg::rgba8> m_angle;
-    agg::SliderCtrl<agg::rgba8> m_scale;
+    agg::SliderCtrl m_angle;
+    agg::SliderCtrl m_scale;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
@@ -36,7 +36,7 @@ public:
         m_scale(5,  5+15, 300, 12+15, !flip_y)
     {
         AddChildView(m_angle);
-        add_ctrl(m_scale);
+				AddChildView(m_scale);
         m_angle.label("Angle=%3.2f");
         m_scale.label("Scale=%3.2f");
         m_angle.range(-180.0, 180.0);

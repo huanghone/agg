@@ -24,7 +24,7 @@
 
 #include <windows.h>
 #include <string.h>
-#include "ui/agg_platform_support.h"
+#include "ui/widget.h"
 #include "ui/agg_win32_bmp.h"
 #include "gfx/agg_color_conv_rgb8.h"
 #include "gfx/agg_color_conv_rgb16.h"

@@ -22,7 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#include "ctrl/agg_spline_ctrl.h"
+#include "ui/ctrl/spline_ctrl.h"
 
 
 namespace agg

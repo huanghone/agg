@@ -1,24 +1,24 @@
 #include <math.h>
 #include <stdio.h>
-#include "agg_basics.h"
-#include "agg_rendering_buffer.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_conv_curve.h"
-#include "agg_conv_contour.h"
-#include "agg_conv_stroke.h"
-#include "agg_scanline_p.h"
-#include "agg_renderer_scanline.h"
-#include "agg_pixfmt_rgb.h"
-#include "agg_pixfmt_rgba.h"
-#include "agg_pixfmt_gray.h"
-#include "agg_bounding_rect.h"
-#include "agg_trans_perspective.h"
-#include "agg_blur.h"
-#include "ctrl/agg_slider_ctrl.h"
-#include "ctrl/agg_rbox_ctrl.h"
-#include "ctrl/agg_cbox_ctrl.h"
-#include "ctrl/agg_polygon_ctrl.h"
-#include "platform/agg_platform_support.h"
+#include "gfx/agg_basics.h"
+#include "gfx/agg_rendering_buffer.h"
+#include "gfx/agg_rasterizer_scanline_aa.h"
+#include "gfx/agg_conv_curve.h"
+#include "gfx/agg_conv_contour.h"
+#include "gfx/agg_conv_stroke.h"
+#include "gfx/agg_scanline_p.h"
+#include "gfx/agg_renderer_scanline.h"
+#include "gfx/agg_pixfmt_rgb.h"
+#include "gfx/agg_pixfmt_rgba.h"
+#include "gfx/agg_pixfmt_gray.h"
+#include "gfx/agg_bounding_rect.h"
+#include "gfx/agg_trans_perspective.h"
+#include "gfx/agg_blur.h"
+#include "ui/ctrl/agg_slider_ctrl.h"
+#include "ui/ctrl/agg_rbox_ctrl.h"
+#include "ui/ctrl/agg_cbox_ctrl.h"
+#include "ui/ctrl/agg_polygon_ctrl.h"
+#include "ui/widget.h"
 
 
 enum flip_y_e { flip_y = true };
@@ -26,22 +26,22 @@ enum flip_y_e { flip_y = true };
 
 class the_application : public agg::Widget
 {
-    agg::RBoxCtrl<agg::rgba8>    m_method;
-    agg::SliderCtrl<agg::rgba8>  m_radius;
+    agg::RBoxCtrl m_method;
+    agg::SliderCtrl m_radius;
     agg::polygon_ctrl<agg::rgba8> m_shadow_ctrl;
-    agg::CBoxCtrl<agg::rgba8>    m_channel_r;
-    agg::CBoxCtrl<agg::rgba8>    m_channel_g;
-    agg::CBoxCtrl<agg::rgba8>    m_channel_b;
+    agg::CBoxCtrl m_channel_r;
+    agg::CBoxCtrl m_channel_g;
+    agg::CBoxCtrl m_channel_b;
 
-    agg::path_storage             m_path;
+    agg::path_storage m_path;
     typedef agg::conv_curve<agg::path_storage> shape_type;
-    shape_type                    m_shape;
+    shape_type m_shape;
 
     agg::rasterizer_scanline_aa<> m_ras;
-    agg::scanline_p8              m_sl;
-    agg::rendering_buffer         m_rbuf2;
+    agg::scanline_p8 m_sl;
+    agg::rendering_buffer m_rbuf2;
 
-    agg::stack_blur    <agg::rgba8, agg::stack_blur_calc_rgb<> >     m_stack_blur;
+    agg::stack_blur<agg::rgba8, agg::stack_blur_calc_rgb<> > m_stack_blur;
     agg::recursive_blur<agg::rgba8, agg::recursive_blur_calc_rgb<> > m_recursive_blur;
 
     agg::rect_d m_shape_bounds;
@@ -50,12 +50,12 @@ class the_application : public agg::Widget
 public:
     the_application(agg::pix_format_e format, bool flip_y) :
         agg::Widget(format, flip_y),
-        m_method     (10.0, 10.0, 130.0, 70.0, !flip_y),
-        m_radius     (130 + 10.0, 10.0 + 4.0, 130 + 300.0, 10.0 + 8.0 + 4.0, !flip_y),
+        m_method(10.0, 10.0, 130.0, 70.0, !flip_y),
+        m_radius(130 + 10.0, 10.0 + 4.0, 130 + 300.0, 10.0 + 8.0 + 4.0, !flip_y),
         m_shadow_ctrl(4),
-        m_channel_r  (10.0, 80.0,  "Red", !flip_y),
-        m_channel_g  (10.0, 95.0,  "Green", !flip_y),
-        m_channel_b  (10.0, 110.0, "Blue", !flip_y),
+        m_channel_r(10.0, 80.0,  "Red", !flip_y),
+        m_channel_g(10.0, 95.0,  "Green", !flip_y),
+        m_channel_b(10.0, 110.0, "Blue", !flip_y),
         m_shape(m_path)
     {
         AddChildView(m_method);

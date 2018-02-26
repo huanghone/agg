@@ -68,7 +68,7 @@
 #include "gfx/agg_basics.h"
 #include "gfx/agg_rendering_buffer.h"
 #include "gfx/agg_trans_viewport.h"
-#include "ui/ctrl/agg_ctrl.h"
+#include "ui/ctrl/view.h"
 
 namespace agg {
 

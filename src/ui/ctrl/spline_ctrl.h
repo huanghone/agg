@@ -25,14 +25,14 @@
 #ifndef AGG_SPLINE_CTRL_INCLUDED
 #define AGG_SPLINE_CTRL_INCLUDED
 
-#include "agg_basics.h"
-#include "agg_ellipse.h"
-#include "agg_bspline.h"
-#include "agg_conv_stroke.h"
-#include "agg_path_storage.h"
-#include "agg_trans_affine.h"
-#include "agg_color_rgba.h"
-#include "agg_ctrl.h"
+#include "gfx/agg_basics.h"
+#include "gfx/agg_ellipse.h"
+#include "gfx/agg_bspline.h"
+#include "gfx/agg_conv_stroke.h"
+#include "gfx/agg_path_storage.h"
+#include "gfx/agg_trans_affine.h"
+#include "gfx/agg_color_rgba.h"
+#include "ui/ctrl/view.h"
 
 namespace agg
 {

@@ -19,7 +19,7 @@ typedef agg::gray16 color_type;
 
 #elif defined(AGG_BGR24)
 
-#include "agg_pixfmt_rgb.h"
+#include "gfx/agg_pixfmt_rgb.h"
 #define pix_format agg::pix_format_bgr24
 typedef agg::pixfmt_bgr24 pixfmt;
 typedef agg::pixfmt_bgr24_pre pixfmt_pre;

@@ -29,7 +29,7 @@
 #include "gfx/agg_conv_stroke.h"
 #include "gfx/agg_ellipse.h"
 #include "gfx/agg_color_rgba.h"
-#include "ui/ctrl/agg_ctrl.h"
+#include "ui/ctrl/view.h"
 
 namespace agg
 {

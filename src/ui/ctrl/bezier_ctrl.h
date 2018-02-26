@@ -30,8 +30,8 @@
 #include "gfx/agg_color_rgba.h"
 #include "gfx/agg_conv_stroke.h"
 #include "gfx/agg_conv_curve.h"
-#include "ui/ctrl/agg_polygon_ctrl.h"
 #include "gfx/canvas.hh"
+#include "ui/ctrl/polygon_ctrl.h"
 
 namespace agg {
 
@@ -40,8 +40,8 @@ public:
   BezierCtrlBase();
 
   void curve(
-		double x1, double y1, 
-		double x2, double y2, 
+		double x1, double y1,
+		double x2, double y2,
 		double x3, double y3,
 		double x4, double y4);
   curve4& curve();
@@ -81,7 +81,6 @@ public:
   void rewind(unsigned path_id);
   unsigned vertex(double* x, double* y);
 
-
 private:
   curve4 m_curve;
   ellipse m_ellipse;
@@ -89,7 +88,6 @@ private:
   polygon_ctrl_impl m_poly;
   unsigned m_idx;
 };
-
 
 class BezierCtrl: public BezierCtrlBase {
 public:
@@ -164,11 +162,10 @@ private:
 
 class Curve3Ctrl : public Curve3CtrlBase {
 public:
-	typedef agg::rgba8 ColorT;
 	Curve3Ctrl(): m_color(rgba(0.0, 0.0, 0.0)) { }
           
-	void line_color(const ColorT& c) { m_color = c; }
-	const ColorT& color(unsigned i) const { return m_color; } 
+	void line_color(const agg::rgba8& c) { m_color = c; }
+	const agg::rgba8& color(unsigned i) const { return m_color; }
 
 private:
 	Curve3Ctrl(const Curve3Ctrl&);

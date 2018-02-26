@@ -32,7 +32,7 @@
 #include "gfx/agg_gsv_text.h"
 #include "gfx/agg_conv_stroke.h"
 #include "gfx/agg_path_storage.h"
-#include "ui/ctrl/agg_ctrl.h"
+#include "ui/ctrl/view.h"
 
 
 namespace agg {

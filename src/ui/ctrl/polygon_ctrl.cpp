@@ -22,7 +22,7 @@
 // MA 02110-1301, USA.
 //----------------------------------------------------------------------------
 
-#include "ctrl/agg_polygon_ctrl.h"
+#include "ui/ctrl/polygon_ctrl.h"
 
 namespace agg
 {

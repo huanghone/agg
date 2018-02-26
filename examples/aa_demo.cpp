@@ -1,12 +1,12 @@
-#include "agg_basics.h"
-#include "agg_rendering_buffer.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_scanline_u.h"
-#include "agg_renderer_scanline.h"
-#include "agg_pixfmt_rgb.h"
-#include "platform/agg_platform_support.h"
-#include "ctrl/agg_slider_ctrl.h"
-#include "ctrl/agg_cbox_ctrl.h"
+#include "gfx/agg_basics.h"
+#include "gfx/agg_rendering_buffer.h"
+#include "gfx/agg_rasterizer_scanline_aa.h"
+#include "gfx/agg_scanline_u.h"
+#include "gfx/agg_renderer_scanline.h"
+#include "gfx/agg_pixfmt_rgb.h"
+#include "ui/agg_platform_support.h"
+#include "ui/ctrl/agg_slider_ctrl.h"
+#include "ui/ctrl/agg_cbox_ctrl.h"
 
 
 enum flip_y_e { flip_y = true };

@@ -24,7 +24,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "ctrl/agg_bezier_ctrl.h"
+#include "ui/ctrl/bezier_ctrl.h"
 
 namespace agg
 {

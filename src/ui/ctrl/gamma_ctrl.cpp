@@ -23,8 +23,8 @@
 //----------------------------------------------------------------------------
 
 #include <stdio.h>
-#include "agg_math.h"
-#include "ctrl/agg_gamma_ctrl.h"
+#include "gfx/agg_math.h"
+#include "ui/ctrl/gamma_ctrl.h"
 
 namespace agg
 {

@@ -15,18 +15,17 @@
 #include "gfx/agg_arc.h"
 #include "gfx/agg_bezier_arc.h"
 #include "gfx/agg_pixfmt_rgb.h"
-#include "ui/ctrl/agg_slider_ctrl.h"
-#include "ui/ctrl/agg_bezier_ctrl.h"
-#include "ui/ctrl/agg_rbox_ctrl.h"
-#include "ui/ctrl/agg_cbox_ctrl.h"
-#include "ui/agg_platform_support.h"
 #include "gfx/canvas.hh"
-#include "ui/ctrl/agg_ctrl.h"
+#include "ui/ctrl/slider_ctrl.h"
+#include "ui/ctrl/bezier_ctrl.h"
+#include "ui/ctrl/rbox_ctrl.h"
+#include "ui/ctrl/cbox_ctrl.h"
+#include "ui/ctrl/view.h"
+#include "ui/widget.h"
 
 enum flip_y_e { flip_y = true };
 
 typedef agg::pixfmt_bgr24 pixfmt;
-
 
 void bezier4_point(
 	double x1, double y1, double x2, double y2,
@@ -423,17 +422,17 @@ public:
   MainWindow(agg::pix_format_e format, bool flip_y) :
     agg::Widget(format, flip_y),
     m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
-    m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
-    m_approximation_scale(5.0,    17+5.0, 240.0,    17+12.0,  !flip_y),
-    m_cusp_limit         (5.0, 17+17+5.0, 240.0, 17+17+12.0,  !flip_y),
-    m_width              (245.0,     5.0, 495.0,       12.0,  !flip_y),
-    m_show_points        (250.0, 15+5, "Show Points",         !flip_y),
-    m_show_outline       (250.0, 30+5, "Show Stroke Outline", !flip_y),
-    m_curve_type         (535.0,   5.0, 535.0+115.0,   55.0,  !flip_y),
-    m_case_type          (535.0,  60.0, 535.0+115.0,   195.0, !flip_y),
-    m_inner_join         (535.0, 200.0, 535.0+115.0,   290.0, !flip_y),
-    m_line_join          (535.0, 295.0, 535.0+115.0,   385.0, !flip_y),
-    m_line_cap           (535.0, 395.0, 535.0+115.0,   455.0, !flip_y),
+    m_angle_tolerance(5.0, 5.0, 240.0, 12.0, !flip_y),
+    m_approximation_scale(5.0, 17+5.0, 240.0, 17+12.0, !flip_y),
+    m_cusp_limit(5.0, 17+17+5.0, 240.0, 17+17+12.0, !flip_y),
+    m_width(245.0, 5.0, 495.0, 12.0, !flip_y),
+    m_show_points(250.0, 15+5, "Show Points", !flip_y),
+    m_show_outline(250.0, 30+5, "Show Stroke Outline", !flip_y),
+    m_curve_type(535.0, 5.0, 535.0+115.0, 55.0, !flip_y),
+    m_case_type(535.0, 60.0, 535.0+115.0, 195.0, !flip_y),
+    m_inner_join(535.0, 200.0, 535.0+115.0, 290.0, !flip_y),
+    m_line_join(535.0, 295.0, 535.0+115.0, 385.0, !flip_y),
+    m_line_cap(535.0, 395.0, 535.0+115.0, 455.0, !flip_y),
     m_cur_case_type(-1)
 	{
 		m_curve1.line_color(m_ctrl_color);
@@ -657,8 +656,6 @@ public:
 		return max_error * scale;
 	}
 
-
-
 	virtual void on_draw() {
 		pixfmt pf(rbuf_window());
 		renderer_base_type ren_base(pf);
@@ -706,11 +703,6 @@ public:
 			m_curve1.x4(), m_curve1.y4());
 
 		path.concat_path(curve);
-		//path.move_to(m_curve1.x1(), m_curve1.y1());
-		//path.line_to(m_curve1.x2(), m_curve1.y2());
-		//path.line_to(m_curve1.x3(), m_curve1.y3());
-		//path.line_to(m_curve1.x4(), m_curve1.y4());
-
 
 		agg::conv_stroke<agg::path_storage> stroke(path);
 		stroke.width(m_width.value());
@@ -727,7 +719,6 @@ public:
 
 		while(!agg::is_stop(cmd = path.vertex(&x, &y))) {
 			if(m_show_points.status()) {
-				//DrawEllipse()
 				agg::ellipse ell(x, y, 1.5, 1.5, 8);
 				canvas.DrawPath(ell, agg::rgba(0, 0, 0, 0.5));
 			}
@@ -735,40 +726,9 @@ public:
 		}
 
 		if(m_show_outline.status()) {
-			// Draw a stroke of the stroke to see the internals
-			//--------------
 			agg::conv_stroke<agg::conv_stroke<agg::path_storage> > stroke2(stroke);
 			canvas.DrawPath(stroke2, agg::rgba(0, 0, 0, 0.5));
 		}
-
-		// Check ellipse and arc for the number of points
-		//---------------
-		//agg::ellipse a(100, 100, m_width.value(), m_width.value(), 0);
-		//ras.add_path(a);
-		//ren.color(agg::rgba(0.5,0,0, 0.5));
-		//agg::render_scanlines(ras, sl, ren);
-		//a.rewind(0);
-		//while(!agg::is_stop(cmd = a.vertex(&x, &y)))
-		//{
-		//    if(agg::is_vertex(cmd))
-		//    {
-		//        agg::ellipse ell(x, y, 1.5, 1.5, 8);
-		//        ras.add_path(ell);
-		//        ren.color(agg::rgba(0,0,0,0.5));
-		//        agg::render_scanlines(ras, sl, ren);
-		//    }
-		//}
-
-
-		// Check a circle with huge radius (10,000,000) and high approximation accuracy
-		//---------------
-		//double circle_pnt_count = 0;
-		//agg::bezier_arc ell(0,0, 10000000, 10000000, 0, 2*agg::pi);
-		//agg::conv_curve<agg::bezier_arc, agg::curve3_div, agg::curve4_div3> crv(ell);
-		//crv.approximation_scale(10.0);
-		//crv.rewind(0);
-		//while(crv.vertex(&x, &y)) ++circle_pnt_count;
-
 
 		char buf[512]; 
 		agg::gsv_text t;
@@ -830,8 +790,6 @@ public:
 
 			case 1: //m_case_type.add_item("13---24");
 				m_curve1.curve(150, 150, 350, 150, 150, 150, 350, 150);
-				//m_curve1.curve(252, 227, 16, 227, 506, 227, 285, 227);
-				//m_curve1.curve(252, 227, 16, 227, 387, 227, 285, 227);
 				break;
 
 			case 2: //m_case_type.add_item("Smooth Cusp 1");

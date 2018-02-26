@@ -1,17 +1,17 @@
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
-#include "agg_basics.h"
-#include "agg_rendering_buffer.h"
-#include "agg_rasterizer_scanline_aa.h"
-#include "agg_rasterizer_outline.h"
-#include "agg_scanline_p.h"
-#include "agg_scanline_bin.h"
-#include "agg_renderer_scanline.h"
-#include "agg_renderer_primitives.h"
-#include "ctrl/agg_slider_ctrl.h"
-#include "ctrl/agg_cbox_ctrl.h"
-#include "platform/agg_platform_support.h"
+#include "gfx/agg_basics.h"
+#include "gfx/agg_rendering_buffer.h"
+#include "gfx/agg_rasterizer_scanline_aa.h"
+#include "gfx/agg_rasterizer_outline.h"
+#include "gfx/agg_scanline_p.h"
+#include "gfx/agg_scanline_bin.h"
+#include "gfx/agg_renderer_scanline.h"
+#include "gfx/agg_renderer_primitives.h"
+#include "ui/ctrl/agg_slider_ctrl.h"
+#include "ui/ctrl/agg_cbox_ctrl.h"
+#include "ui/widget.h"
 
 #define AGG_BGR24
 #include "pixel_formats.h"
@@ -28,12 +28,12 @@ class the_application : public agg::Widget
     double m_dx;
     double m_dy;
     int    m_idx;
-    agg::SliderCtrl<agg::rgba8>  m_gamma;
-    agg::SliderCtrl<agg::rgba8>  m_alpha;
-    agg::CBoxCtrl<agg::rgba8>    m_test;
+    agg::SliderCtrl m_gamma;
+    agg::SliderCtrl m_alpha;
+    agg::CBoxCtrl m_test;
     agg::rasterizer_scanline_aa<> m_ras;
-    agg::scanline_p8              m_sl_p8;
-    agg::scanline_bin             m_sl_bin;
+    agg::scanline_p8 m_sl_p8;
+    agg::scanline_bin m_sl_bin;
 
 
 public:
