@@ -51,11 +51,15 @@ public:
 
 ////////////////////////////
 // RAS
+	void reset() {
+		ras.reset();
+	}
+
 	template<class VertexSource>
 	void DrawPath(VertexSource& vs, agg::rgba8 color, unsigned path_id = 0) {
-		add_path(vs, path_id);
+		ras.add_path(vs, path_id);
 		ren.color(color);
-		agg::render_scanlines(ras, sl, ren)
+		agg::render_scanlines(ras, sl, ren);
 	}
 
 //////////////////////////
@@ -71,6 +75,15 @@ public:
 	scanline sl;
 	renderer_scanline ren;
 };
+
+template<class CanvasT, class Ctrl>
+void render_ctrl(CanvasT& canvas, Ctrl& c) {
+	unsigned i;
+	for (i = 0; i < c.num_paths(); i++) {
+		canvas.reset();
+		canvas.DrawPath(c, c.color(i), i);
+	}
+}
 
 class the_application : public agg::Widget {
 	agg::rgba8 m_ctrl_color;
@@ -338,10 +351,9 @@ public:
 		pixfmt pf(rbuf_window());
 		renderer_base_type ren_base(pf);
 		ren_base.clear(agg::rgba8(255, 255, 255));
-		renderer_scanline ren(ren_base);
 
-		rasterizer_scanline ras;
-		scanline sl;
+		Canvas canvas;
+		canvas.attach(ren_base);
 
 		agg::path_storage path;
 
@@ -395,9 +407,7 @@ public:
 		stroke.inner_join(agg::inner_join_e(m_inner_join.cur_item()));
 		stroke.inner_miter_limit(1.01);
 
-		ras.add_path(stroke);
-		ren.color(agg::rgba(0, 0.5, 0, 0.5));
-		agg::render_scanlines(ras, sl, ren);
+		canvas.DrawPath(stroke, agg::rgba(0, 0.5, 0, 0.5));
 
 		unsigned cmd;
 		unsigned num_points1 = 0;
@@ -406,9 +416,7 @@ public:
 		while(!agg::is_stop(cmd = path.vertex(&x, &y))) {
 			if(m_show_points.status()) {
 				agg::ellipse ell(x, y, 1.5, 1.5, 8);
-				ras.add_path(ell);
-				ren.color(agg::rgba(0,0,0, 0.5));
-				agg::render_scanlines(ras, sl, ren);
+				canvas.DrawPath(ell, agg::rgba(0, 0, 0, 0.5));
 			}
 			++num_points1;
 		}
@@ -417,9 +425,7 @@ public:
 			// Draw a stroke of the stroke to see the internals
 			//--------------
 			agg::conv_stroke<agg::conv_stroke<agg::path_storage> > stroke2(stroke);
-			ras.add_path(stroke2);
-			ren.color(agg::rgba(0,0,0, 0.5));
-			agg::render_scanlines(ras, sl, ren);
+			canvas.DrawPath(stroke2, agg::rgba(0, 0, 0, 0.5));
 		}
 
 		// Check ellipse and arc for the number of points
@@ -479,22 +485,20 @@ public:
 		t.start_point(10.0, 85.0);
 		t.text(buf);
 
-		ras.add_path(pt);
-		ren.color(agg::rgba8(0,0,0));
-		agg::render_scanlines(ras, sl, ren);
+		canvas.DrawPath(pt, agg::rgba8(0, 0, 0));
 
-		agg::render_ctrl(ras, sl, ren_base, m_curve1);
-		agg::render_ctrl(ras, sl, ren_base, m_angle_tolerance);
-		agg::render_ctrl(ras, sl, ren_base, m_approximation_scale);
-		agg::render_ctrl(ras, sl, ren_base, m_cusp_limit);
-		agg::render_ctrl(ras, sl, ren_base, m_width);
-		agg::render_ctrl(ras, sl, ren_base, m_show_points);
-		agg::render_ctrl(ras, sl, ren_base, m_show_outline);
-		agg::render_ctrl(ras, sl, ren_base, m_curve_type);
-		agg::render_ctrl(ras, sl, ren_base, m_case_type);
-		agg::render_ctrl(ras, sl, ren_base, m_inner_join);
-		agg::render_ctrl(ras, sl, ren_base, m_line_join);
-		agg::render_ctrl(ras, sl, ren_base, m_line_cap);
+		render_ctrl(canvas, m_curve1);
+		render_ctrl(canvas, m_angle_tolerance);
+		render_ctrl(canvas, m_approximation_scale);
+		render_ctrl(canvas, m_cusp_limit);
+		render_ctrl(canvas, m_width);
+		render_ctrl(canvas, m_show_points);
+		render_ctrl(canvas, m_show_outline);
+		render_ctrl(canvas, m_curve_type);
+		render_ctrl(canvas, m_case_type);
+		render_ctrl(canvas, m_inner_join);
+		render_ctrl(canvas, m_line_join);
+		render_ctrl(canvas, m_line_cap);
 	}
 
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {
