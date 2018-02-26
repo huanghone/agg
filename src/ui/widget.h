@@ -76,9 +76,9 @@ enum pix_format_e {
 // the system dependent flags should be mapped into these ones. The meaning
 // of that is as follows. For example, if kbd_ctrl is set it means that the 
 // ctrl key is pressed and being held at the moment. They are also used in 
-// the overridden methods such as on_mouse_move(), on_mouse_button_down(),
-// on_mouse_button_dbl_click(), on_mouse_button_up(), on_key(). 
-// In the method on_mouse_button_up() the mouse flags have different
+// the overridden methods such as OnMouseMove(), OnMouseButtonDown(),
+// on_mouse_button_dbl_click(), OnMouseButtonUp(), on_key(). 
+// In the method OnMouseButtonUp() the mouse flags have different
 // meaning. They mean that the respective button is being released, but
 // the meaning of the keyboard flags remains the same.
 // There's absolut minimal set of flags is used because they'll be most
@@ -361,9 +361,9 @@ public:
 	virtual void on_init() {}
 	virtual void on_resize(int sx, int sy) {}
 	virtual void on_idle() {}
-	virtual void on_mouse_move(int x, int y, unsigned flags) {}
-	virtual void on_mouse_button_down(int x, int y, unsigned flags) {}
-	virtual void on_mouse_button_up(int x, int y, unsigned flags) {}
+	virtual void OnMouseMove(int x, int y, unsigned flags) {}
+	virtual void OnMouseButtonDown(int x, int y, unsigned flags) {}
+	virtual void OnMouseButtonUp(int x, int y, unsigned flags) {}
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {}
 	virtual void on_ctrl_change() {}
 	virtual void on_draw() {}

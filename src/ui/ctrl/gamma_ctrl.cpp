@@ -1,27 +1,3 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include <stdio.h>
 #include "gfx/agg_math.h"
 #include "ui/ctrl/gamma_ctrl.h"
@@ -367,7 +343,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool gamma_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool gamma_ctrl_impl::OnMouseButtonDown(double x, double y)
     {
         inverse_transform_xy(&x, &y);
         calc_points();
@@ -395,7 +371,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool gamma_ctrl_impl::on_mouse_button_up(double, double)
+    bool gamma_ctrl_impl::OnMouseButtonUp(double, double)
     {
         if(m_mouse_point)
         {
@@ -407,12 +383,12 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool gamma_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool gamma_ctrl_impl::OnMouseMove(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         if(!button_flag)
         {
-            return on_mouse_button_up(x, y);
+            return OnMouseButtonUp(x, y);
         }
 
         if(m_mouse_point == 1)

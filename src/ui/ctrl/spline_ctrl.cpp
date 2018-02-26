@@ -296,7 +296,7 @@ namespace agg {
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
     }
 
-bool SplineCtrlBase::on_mouse_button_down(double x, double y) {
+bool SplineCtrlBase::OnMouseButtonDown(double x, double y) {
     inverse_transform_xy(&x, &y);
     unsigned i;
     for(i = 0; i < m_num_pnt; i++)  
@@ -314,7 +314,7 @@ bool SplineCtrlBase::on_mouse_button_down(double x, double y) {
     return false;
 }
 
-bool SplineCtrlBase::on_mouse_button_up(double, double) {
+bool SplineCtrlBase::OnMouseButtonUp(double, double) {
 	if(m_move_pnt >= 0) {
 		m_move_pnt = -1;
 		return true;
@@ -322,10 +322,10 @@ bool SplineCtrlBase::on_mouse_button_up(double, double) {
 	return false;
 }
 
-bool SplineCtrlBase::on_mouse_move(double x, double y, bool button_flag) {
+bool SplineCtrlBase::OnMouseMove(double x, double y, bool button_flag) {
 	inverse_transform_xy(&x, &y);
 	if(!button_flag) {
-		return on_mouse_button_up(x, y);
+		return OnMouseButtonUp(x, y);
 	}
 
 	if(m_move_pnt >= 0) {

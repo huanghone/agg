@@ -14,10 +14,10 @@
 #include "gfx/agg_bounding_rect.h"
 #include "gfx/agg_trans_perspective.h"
 #include "gfx/agg_blur.h"
-#include "ui/ctrl/agg_slider_ctrl.h"
-#include "ui/ctrl/agg_rbox_ctrl.h"
-#include "ui/ctrl/agg_cbox_ctrl.h"
-#include "ui/ctrl/agg_polygon_ctrl.h"
+#include "ui/ctrl/slider_ctrl.h"
+#include "ui/ctrl/rbox_ctrl.h"
+#include "ui/ctrl/cbox_ctrl.h"
+#include "ui/ctrl/polygon_ctrl.h"
 #include "ui/widget.h"
 
 

@@ -1,30 +1,5 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include <string.h>
 #include "ui/ctrl/cbox_ctrl.h"
-
 
 namespace agg
 {
@@ -62,7 +37,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool CBoxCtrlBase::on_mouse_button_down(double x, double y)
+    bool CBoxCtrlBase::OnMouseButtonDown(double x, double y)
     {
         inverse_transform_xy(&x, &y);
         if(x >= m_x1 && y >= m_y1 && x <= m_x2 && y <= m_y2)
@@ -75,7 +50,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool CBoxCtrlBase::on_mouse_move(double, double, bool)
+    bool CBoxCtrlBase::OnMouseMove(double, double, bool)
     {
         return false;
     }
@@ -88,7 +63,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    bool CBoxCtrlBase::on_mouse_button_up(double, double)
+    bool CBoxCtrlBase::OnMouseButtonUp(double, double)
     {
         return false;
     }

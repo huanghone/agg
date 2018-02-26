@@ -4,12 +4,12 @@
 #include "gfx/agg_scanline_u.h"
 #include "gfx/agg_renderer_scanline.h"
 #include "gfx/agg_pixfmt_rgb.h"
-#include "ui/agg_platform_support.h"
-#include "ui/ctrl/agg_slider_ctrl.h"
-#include "ui/ctrl/agg_cbox_ctrl.h"
+#include "ui/widget.h"
+#include "ui/ctrl/slider_ctrl.h"
+#include "ui/ctrl/cbox_ctrl.h"
 
 
-enum flip_y_e { flip_y = true };
+enum flip_y_e { flip_y = false };
 
 
 namespace agg
@@ -93,23 +93,6 @@ namespace agg
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class the_application : public agg::Widget
 {
     double m_x[3];
@@ -118,8 +101,8 @@ class the_application : public agg::Widget
     double m_dy;
     int    m_idx;
 
-    agg::SliderCtrl<agg::rgba8> m_slider1;
-    agg::SliderCtrl<agg::rgba8> m_slider2;
+    agg::SliderCtrl m_slider1;
+    agg::SliderCtrl m_slider2;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :

@@ -36,9 +36,9 @@ public:
   void move(double d);
 
   virtual bool in_rect(double x, double y) const;
-  virtual bool on_mouse_button_down(double x, double y);
-  virtual bool on_mouse_button_up(double x, double y);
-  virtual bool on_mouse_move(double x, double y, bool button_flag);
+  virtual bool OnMouseButtonDown(double x, double y);
+  virtual bool OnMouseButtonUp(double x, double y);
+  virtual bool OnMouseMove(double x, double y, bool button_flag);
   virtual bool on_arrow_keys(bool left, bool right, bool down, bool up);
 
   // Vertex soutce interface

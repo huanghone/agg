@@ -1,27 +1,3 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include <string.h>
 #include <stdio.h>
 #include "ui/ctrl/bezier_ctrl.h"
@@ -173,25 +149,25 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool BezierCtrlBase::on_mouse_button_down(double x, double y)
+    bool BezierCtrlBase::OnMouseButtonDown(double x, double y)
     {
         inverse_transform_xy(&x, &y);
-        return m_poly.on_mouse_button_down(x, y);
+        return m_poly.OnMouseButtonDown(x, y);
     }
 
 
     //------------------------------------------------------------------------
-    bool BezierCtrlBase::on_mouse_move(double x, double y, bool button_flag)
+    bool BezierCtrlBase::OnMouseMove(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
-        return m_poly.on_mouse_move(x, y, button_flag);
+        return m_poly.OnMouseMove(x, y, button_flag);
     }
 
 
     //------------------------------------------------------------------------
-    bool BezierCtrlBase::on_mouse_button_up(double x, double y)
+    bool BezierCtrlBase::OnMouseButtonUp(double x, double y)
     {
-        return m_poly.on_mouse_button_up(x, y);
+        return m_poly.OnMouseButtonUp(x, y);
     }
 
 
@@ -332,25 +308,25 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool Curve3CtrlBase::on_mouse_button_down(double x, double y)
+    bool Curve3CtrlBase::OnMouseButtonDown(double x, double y)
     {
         inverse_transform_xy(&x, &y);
-        return m_poly.on_mouse_button_down(x, y);
+        return m_poly.OnMouseButtonDown(x, y);
     }
 
 
     //------------------------------------------------------------------------
-    bool Curve3CtrlBase::on_mouse_move(double x, double y, bool button_flag)
+    bool Curve3CtrlBase::OnMouseMove(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
-        return m_poly.on_mouse_move(x, y, button_flag);
+        return m_poly.OnMouseMove(x, y, button_flag);
     }
 
 
     //------------------------------------------------------------------------
-    bool Curve3CtrlBase::on_mouse_button_up(double x, double y)
+    bool Curve3CtrlBase::OnMouseButtonUp(double x, double y)
     {
-        return m_poly.on_mouse_button_up(x, y);
+        return m_poly.OnMouseButtonUp(x, y);
     }
 
 

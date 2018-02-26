@@ -205,7 +205,7 @@ bool SliderCtrlBase::in_rect(double x, double y) const {
   return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
 }
 
-bool SliderCtrlBase::on_mouse_button_down(double x, double y) {
+bool SliderCtrlBase::OnMouseButtonDown(double x, double y) {
   inverse_transform_xy(&x, &y);
 
   double xp = m_xs1 + (m_xs2 - m_xs1) * m_value;
@@ -219,10 +219,10 @@ bool SliderCtrlBase::on_mouse_button_down(double x, double y) {
   return false;
 }
 
-bool SliderCtrlBase::on_mouse_move(double x, double y, bool button_flag) {
+bool SliderCtrlBase::OnMouseMove(double x, double y, bool button_flag) {
 	inverse_transform_xy(&x, &y);
 	if(!button_flag) {
-		on_mouse_button_up(x, y);
+		OnMouseButtonUp(x, y);
 		return false;
 	}
 
@@ -236,7 +236,7 @@ bool SliderCtrlBase::on_mouse_move(double x, double y, bool button_flag) {
 	return false;
 }
 
-bool SliderCtrlBase::on_mouse_button_up(double, double) {
+bool SliderCtrlBase::OnMouseButtonUp(double, double) {
   m_mouse_move = false;
   normalize_value(true);
   return true;

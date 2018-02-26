@@ -1,27 +1,3 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include "ui/ctrl/polygon_ctrl.h"
 
 namespace agg
@@ -132,7 +108,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool polygon_ctrl_impl::OnMouseButtonDown(double x, double y)
     {
         unsigned i;
         bool ret = false;
@@ -180,7 +156,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool polygon_ctrl_impl::OnMouseMove(double x, double y, bool button_flag)
     {
         bool ret = false;
         double dx;
@@ -229,7 +205,7 @@ namespace agg
         return ret;
     }
 
-    bool polygon_ctrl_impl::on_mouse_button_up(double x, double y)
+    bool polygon_ctrl_impl::OnMouseButtonUp(double x, double y)
     {
         bool ret = (m_node >= 0) || (m_edge >= 0);
         m_node = -1;

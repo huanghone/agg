@@ -12,9 +12,9 @@
 #include "gfx/agg_span_interpolator_linear.h"
 #include "gfx/agg_span_gouraud_rgba.h"
 #include "gfx/agg_span_allocator.h"
-#include "ui//agg_platform_support.h"
-#include "ui/ctrl/agg_slider_ctrl.h"
-#include "ui/ctrl/agg_cbox_ctrl.h"
+#include "ui//widget.h"
+#include "ui/ctrl/slider_ctrl.h"
+#include "ui/ctrl/cbox_ctrl.h"
 
 
 enum flip_y_e { flip_y = false };

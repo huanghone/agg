@@ -526,7 +526,7 @@ void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
 	m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
 
 	root_view_.set_cur(m_specific->m_cur_x, m_specific->m_cur_y);
-	if (root_view_.on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y)) {
+	if (root_view_.OnMouseButtonDown(m_specific->m_cur_x, m_specific->m_cur_y)) {
 		on_ctrl_change();
 		force_redraw();
 	}	else {
@@ -536,7 +536,7 @@ void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
 				force_redraw();
 			}
 		} else {
-			on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+			OnMouseButtonDown(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 		}
 	}
 }
@@ -551,11 +551,11 @@ void Widget::OnLButtonUp(int x, int y, WPARAM wParam) {
 	}
 	m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
 
-	if (root_view_.on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y)) {
+	if (root_view_.OnMouseButtonUp(m_specific->m_cur_x, m_specific->m_cur_y)) {
 		on_ctrl_change();
 		force_redraw();
 	}
-	on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	OnMouseButtonUp(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 }
 
 void Widget::OnRButtonDown(int x, int y, WPARAM wParam) {
@@ -567,7 +567,7 @@ void Widget::OnRButtonDown(int x, int y, WPARAM wParam) {
 		m_specific->m_cur_y = y;
 	}
 	m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
-	on_mouse_button_down(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	OnMouseButtonDown(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 }
 
 void Widget::OnRButtonUp(int x, int y, WPARAM wParam) {
@@ -579,7 +579,7 @@ void Widget::OnRButtonUp(int x, int y, WPARAM wParam) {
 		m_specific->m_cur_y = y;
 	}
 	m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
-	on_mouse_button_up(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+	OnMouseButtonUp(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 }
 
 void Widget::OnMouseMove(int x, int y, WPARAM wParam) {
@@ -591,12 +591,12 @@ void Widget::OnMouseMove(int x, int y, WPARAM wParam) {
 	}
 	m_specific->m_input_flags = get_key_flags(wParam);
 
-	if (root_view_.on_mouse_move(m_specific->m_cur_x, m_specific->m_cur_y, (m_specific->m_input_flags & mouse_left) != 0)) {
+	if (root_view_.OnMouseMove(m_specific->m_cur_x, m_specific->m_cur_y, (m_specific->m_input_flags & mouse_left) != 0)) {
 		on_ctrl_change();
 		force_redraw();
 	}	else {
 		if (!root_view_.in_rect(m_specific->m_cur_x, m_specific->m_cur_y)) {
-			on_mouse_move(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
+			OnMouseMove(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 		}
 	}
 }

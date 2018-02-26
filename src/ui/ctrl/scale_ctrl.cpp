@@ -253,7 +253,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool ScaleCtrlBase::on_mouse_button_down(double x, double y)
+    bool ScaleCtrlBase::OnMouseButtonDown(double x, double y)
     {
         inverse_transform_xy(&x, &y);
 
@@ -332,12 +332,12 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool ScaleCtrlBase::on_mouse_move(double x, double y, bool button_flag)
+    bool ScaleCtrlBase::OnMouseMove(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         if(!button_flag)
         {
-            return on_mouse_button_up(x, y);
+            return OnMouseButtonUp(x, y);
         }
 
         double xp = x + m_pdx;
@@ -403,7 +403,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool ScaleCtrlBase::on_mouse_button_up(double, double)
+    bool ScaleCtrlBase::OnMouseButtonUp(double, double)
     {
         m_move_what = move_nothing;
         return false;
