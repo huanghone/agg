@@ -30,7 +30,7 @@ namespace agg
 {
 
     //------------------------------------------------------------------------
-    cbox_ctrl_impl::cbox_ctrl_impl(double x, double y, 
+    CBoxCtrlBase::CBoxCtrlBase(double x, double y, 
                                    const char* l, 
                                    bool flip_y) :
         View(x, y, x + 9.0 * 1.5, y + 9.0 * 1.5, flip_y),
@@ -45,14 +45,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void cbox_ctrl_impl::text_size(double h, double w)
+    void CBoxCtrlBase::text_size(double h, double w)
     {
         m_text_width = w; 
         m_text_height = h; 
     }
 
     //------------------------------------------------------------------------
-    void cbox_ctrl_impl::label(const char* l)
+    void CBoxCtrlBase::label(const char* l)
     {
         unsigned len = strlen(l);
         if(len > 127) len = 127;
@@ -62,7 +62,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool cbox_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool CBoxCtrlBase::on_mouse_button_down(double x, double y)
     {
         inverse_transform_xy(&x, &y);
         if(x >= m_x1 && y >= m_y1 && x <= m_x2 && y <= m_y2)
@@ -75,33 +75,33 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool cbox_ctrl_impl::on_mouse_move(double, double, bool)
+    bool CBoxCtrlBase::on_mouse_move(double, double, bool)
     {
         return false;
     }
 
     //------------------------------------------------------------------------
-    bool cbox_ctrl_impl::in_rect(double x, double y) const
+    bool CBoxCtrlBase::in_rect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && y >= m_y1 && x <= m_x2 && y <= m_y2;
     }
 
     //------------------------------------------------------------------------
-    bool cbox_ctrl_impl::on_mouse_button_up(double, double)
+    bool CBoxCtrlBase::on_mouse_button_up(double, double)
     {
         return false;
     }
 
     //------------------------------------------------------------------------
-    bool cbox_ctrl_impl::on_arrow_keys(bool, bool, bool, bool)
+    bool CBoxCtrlBase::on_arrow_keys(bool, bool, bool, bool)
     {
         return false;
     }
 
 
     //------------------------------------------------------------------------
-    void cbox_ctrl_impl::rewind(unsigned idx)
+    void CBoxCtrlBase::rewind(unsigned idx)
     {
         m_idx = idx;
 
@@ -170,7 +170,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned cbox_ctrl_impl::vertex(double* x, double* y)
+    unsigned CBoxCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_line_to;
         switch(m_idx)

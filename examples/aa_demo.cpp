@@ -118,8 +118,8 @@ class the_application : public agg::Widget
     double m_dy;
     int    m_idx;
 
-    agg::slider_ctrl<agg::rgba8> m_slider1;
-    agg::slider_ctrl<agg::rgba8> m_slider2;
+    agg::SliderCtrl<agg::rgba8> m_slider1;
+    agg::SliderCtrl<agg::rgba8> m_slider2;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :

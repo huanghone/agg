@@ -151,14 +151,14 @@ class the_application : public agg::Widget
     typedef agg::font_engine_win32_tt_int32 font_engine_type;
     typedef agg::font_cache_manager<font_engine_type> font_manager_type;
 
-    agg::rbox_ctrl<agg::rgba8>   m_ren_type;
-    agg::slider_ctrl<agg::rgba8> m_height;
-    agg::slider_ctrl<agg::rgba8> m_width;
-    agg::slider_ctrl<agg::rgba8> m_weight;
-    agg::slider_ctrl<agg::rgba8> m_gamma;
-    agg::cbox_ctrl<agg::rgba8>   m_hinting;
-    agg::cbox_ctrl<agg::rgba8>   m_kerning;
-    agg::cbox_ctrl<agg::rgba8>   m_performance;
+    agg::RBoxCtrl<agg::rgba8>   m_ren_type;
+    agg::SliderCtrl<agg::rgba8> m_height;
+    agg::SliderCtrl<agg::rgba8> m_width;
+    agg::SliderCtrl<agg::rgba8> m_weight;
+    agg::SliderCtrl<agg::rgba8> m_gamma;
+    agg::CBoxCtrl<agg::rgba8>   m_hinting;
+    agg::CBoxCtrl<agg::rgba8>   m_kerning;
+    agg::CBoxCtrl<agg::rgba8>   m_performance;
     font_engine_type             m_feng;
     font_manager_type            m_fman;
     double                       m_old_height;

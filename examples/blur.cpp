@@ -26,12 +26,12 @@ enum flip_y_e { flip_y = true };
 
 class the_application : public agg::Widget
 {
-    agg::rbox_ctrl<agg::rgba8>    m_method;
-    agg::slider_ctrl<agg::rgba8>  m_radius;
+    agg::RBoxCtrl<agg::rgba8>    m_method;
+    agg::SliderCtrl<agg::rgba8>  m_radius;
     agg::polygon_ctrl<agg::rgba8> m_shadow_ctrl;
-    agg::cbox_ctrl<agg::rgba8>    m_channel_r;
-    agg::cbox_ctrl<agg::rgba8>    m_channel_g;
-    agg::cbox_ctrl<agg::rgba8>    m_channel_b;
+    agg::CBoxCtrl<agg::rgba8>    m_channel_r;
+    agg::CBoxCtrl<agg::rgba8>    m_channel_g;
+    agg::CBoxCtrl<agg::rgba8>    m_channel_b;
 
     agg::path_storage             m_path;
     typedef agg::conv_curve<agg::path_storage> shape_type;

@@ -26,8 +26,8 @@ enum flip_y_e { flip_y = true };
 
 class the_application : public agg::Widget
 {
-    agg::slider_ctrl<agg::rgba8> m_angle;
-    agg::slider_ctrl<agg::rgba8> m_scale;
+    agg::SliderCtrl<agg::rgba8> m_angle;
+    agg::SliderCtrl<agg::rgba8> m_scale;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :

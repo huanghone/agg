@@ -90,8 +90,8 @@ void make_arrows(agg::path_storage& ps);
 
 class the_application : public agg::Widget
 {
-    agg::rbox_ctrl<agg::rgba8> m_polygons;
-    agg::rbox_ctrl<agg::rgba8> m_operation;
+    agg::RBoxCtrl<agg::rgba8> m_polygons;
+    agg::RBoxCtrl<agg::rgba8> m_operation;
 
     typedef agg::amask_no_clip_gray8 alpha_mask_type;
     //typedef agg::alpha_mask_gray8 alpha_mask_type;

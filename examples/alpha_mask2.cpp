@@ -145,7 +145,7 @@ namespace agg
 
 class the_application : public agg::Widget
 {
-    agg::slider_ctrl<agg::rgba> m_num_cb;
+    agg::SliderCtrl<agg::rgba> m_num_cb;
 
     typedef agg::amask_no_clip_gray8 alpha_mask_type;
     //typedef agg::alpha_mask_gray8 alpha_mask_type;

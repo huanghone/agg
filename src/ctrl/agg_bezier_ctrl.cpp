@@ -30,7 +30,7 @@ namespace agg
 {
 
     //------------------------------------------------------------------------
-    bezier_ctrl_impl::bezier_ctrl_impl() :
+    BezierCtrlBase::BezierCtrlBase() :
         View(0,0,1,1,false),
         m_stroke(m_curve),
         m_poly(4, 5.0),
@@ -49,7 +49,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void bezier_ctrl_impl::curve(double x1, double y1, 
+    void BezierCtrlBase::curve(double x1, double y1, 
                                  double x2, double y2, 
                                  double x3, double y3,
                                  double x4, double y4)
@@ -66,7 +66,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    curve4& bezier_ctrl_impl::curve()
+    curve4& BezierCtrlBase::curve()
     {
         m_curve.init(m_poly.xn(0), m_poly.yn(0),
                      m_poly.xn(1), m_poly.yn(1),
@@ -76,7 +76,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void bezier_ctrl_impl::rewind(unsigned idx)
+    void BezierCtrlBase::rewind(unsigned idx)
     {
         m_idx = idx;
 
@@ -136,7 +136,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned bezier_ctrl_impl::vertex(double* x, double* y)
+    unsigned BezierCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_stop;
         switch(m_idx)
@@ -166,14 +166,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool bezier_ctrl_impl::in_rect(double x, double y) const
+    bool BezierCtrlBase::in_rect(double x, double y) const
     {
         return false;
     }
 
 
     //------------------------------------------------------------------------
-    bool bezier_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool BezierCtrlBase::on_mouse_button_down(double x, double y)
     {
         inverse_transform_xy(&x, &y);
         return m_poly.on_mouse_button_down(x, y);
@@ -181,7 +181,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool bezier_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool BezierCtrlBase::on_mouse_move(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         return m_poly.on_mouse_move(x, y, button_flag);
@@ -189,14 +189,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool bezier_ctrl_impl::on_mouse_button_up(double x, double y)
+    bool BezierCtrlBase::on_mouse_button_up(double x, double y)
     {
         return m_poly.on_mouse_button_up(x, y);
     }
 
 
     //------------------------------------------------------------------------
-    bool bezier_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool BezierCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
     {
         return m_poly.on_arrow_keys(left, right, down, up);
     }
@@ -207,7 +207,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    curve3_ctrl_impl::curve3_ctrl_impl() :
+    Curve3CtrlBase::Curve3CtrlBase() :
         View(0,0,1,1,false),
         m_stroke(m_curve),
         m_poly(3, 5.0),
@@ -224,7 +224,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void curve3_ctrl_impl::curve(double x1, double y1, 
+    void Curve3CtrlBase::curve(double x1, double y1, 
                                  double x2, double y2, 
                                  double x3, double y3)
     {
@@ -238,7 +238,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    curve3& curve3_ctrl_impl::curve()
+    curve3& Curve3CtrlBase::curve()
     {
         m_curve.init(m_poly.xn(0), m_poly.yn(0),
                      m_poly.xn(1), m_poly.yn(1),
@@ -247,7 +247,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void curve3_ctrl_impl::rewind(unsigned idx)
+    void Curve3CtrlBase::rewind(unsigned idx)
     {
         m_idx = idx;
 
@@ -296,7 +296,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned curve3_ctrl_impl::vertex(double* x, double* y)
+    unsigned Curve3CtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_stop;
         switch(m_idx)
@@ -325,14 +325,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool curve3_ctrl_impl::in_rect(double x, double y) const
+    bool Curve3CtrlBase::in_rect(double x, double y) const
     {
         return false;
     }
 
 
     //------------------------------------------------------------------------
-    bool curve3_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool Curve3CtrlBase::on_mouse_button_down(double x, double y)
     {
         inverse_transform_xy(&x, &y);
         return m_poly.on_mouse_button_down(x, y);
@@ -340,7 +340,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool curve3_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool Curve3CtrlBase::on_mouse_move(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         return m_poly.on_mouse_move(x, y, button_flag);
@@ -348,14 +348,14 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool curve3_ctrl_impl::on_mouse_button_up(double x, double y)
+    bool Curve3CtrlBase::on_mouse_button_up(double x, double y)
     {
         return m_poly.on_mouse_button_up(x, y);
     }
 
 
     //------------------------------------------------------------------------
-    bool curve3_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool Curve3CtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
     {
         return m_poly.on_arrow_keys(left, right, down, up);
     }

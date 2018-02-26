@@ -97,44 +97,43 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    template<class ColorT> class rbox_ctrl : public rbox_ctrl_impl
-    {
-    public:
-        rbox_ctrl(double x1, double y1, double x2, double y2, bool flip_y=false) :
-            rbox_ctrl_impl(x1, y1, x2, y2, flip_y),
-            m_background_color(rgba(1.0, 1.0, 0.9)),
-            m_border_color(rgba(0.0, 0.0, 0.0)),
-            m_text_color(rgba(0.0, 0.0, 0.0)),
-            m_inactive_color(rgba(0.0, 0.0, 0.0)),
-            m_active_color(rgba(0.4, 0.0, 0.0))
-        {
-            m_colors[0] = &m_background_color;
-            m_colors[1] = &m_border_color;
-            m_colors[2] = &m_text_color;
-            m_colors[3] = &m_inactive_color;
-            m_colors[4] = &m_active_color;
-        }
+class RBoxCtrl : public rbox_ctrl_impl {
+public:
+  RBoxCtrl(double x1, double y1, double x2, double y2, bool flip_y=false) :
+		rbox_ctrl_impl(x1, y1, x2, y2, flip_y),
+		m_background_color(rgba(1.0, 1.0, 0.9)),
+		m_border_color(rgba(0.0, 0.0, 0.0)),
+		m_text_color(rgba(0.0, 0.0, 0.0)),
+		m_inactive_color(rgba(0.0, 0.0, 0.0)),
+		m_active_color(rgba(0.4, 0.0, 0.0))
+  {
+		m_colors[0] = &m_background_color;
+		m_colors[1] = &m_border_color;
+		m_colors[2] = &m_text_color;
+		m_colors[3] = &m_inactive_color;
+		m_colors[4] = &m_active_color;
+  }
           
 
-        void background_color(const ColorT& c) { m_background_color = c; }
-        void border_color(const ColorT& c) { m_border_color = c; }
-        void text_color(const ColorT& c) { m_text_color = c; }
-        void inactive_color(const ColorT& c) { m_inactive_color = c; }
-        void active_color(const ColorT& c) { m_active_color = c; }
+  void background_color(const rgba8& c) { m_background_color = c; }
+  void border_color(const rgba8& c) { m_border_color = c; }
+  void text_color(const rgba8& c) { m_text_color = c; }
+  void inactive_color(const rgba8& c) { m_inactive_color = c; }
+  void active_color(const rgba8& c) { m_active_color = c; }
 
-        const ColorT& color(unsigned i) const { return *m_colors[i]; } 
+  const rgba8& color(unsigned i) const { return *m_colors[i]; } 
 
-    private:
-        rbox_ctrl(const rbox_ctrl<ColorT>&);
-        const rbox_ctrl<ColorT>& operator = (const rbox_ctrl<ColorT>&);
+private:
+  RBoxCtrl(const RBoxCtrl&);
+  const RBoxCtrl& operator = (const RBoxCtrl&);
        
-        ColorT m_background_color;
-        ColorT m_border_color;
-        ColorT m_text_color;
-        ColorT m_inactive_color;
-        ColorT m_active_color;
-        ColorT* m_colors[5];
-    };
+	rgba8 m_background_color;
+	rgba8 m_border_color;
+	rgba8 m_text_color;
+	rgba8 m_inactive_color;
+	rgba8 m_active_color;
+	rgba8* m_colors[5];
+};
 
 
 

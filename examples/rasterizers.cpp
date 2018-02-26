@@ -28,9 +28,9 @@ class the_application : public agg::Widget
     double m_dx;
     double m_dy;
     int    m_idx;
-    agg::slider_ctrl<agg::rgba8>  m_gamma;
-    agg::slider_ctrl<agg::rgba8>  m_alpha;
-    agg::cbox_ctrl<agg::rgba8>    m_test;
+    agg::SliderCtrl<agg::rgba8>  m_gamma;
+    agg::SliderCtrl<agg::rgba8>  m_alpha;
+    agg::CBoxCtrl<agg::rgba8>    m_test;
     agg::rasterizer_scanline_aa<> m_ras;
     agg::scanline_p8              m_sl_p8;
     agg::scanline_bin             m_sl_bin;

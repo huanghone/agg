@@ -42,200 +42,219 @@ void bezier4_point(double x1, double y1, double x2, double y2,
    *y = mum13*y1 + 3*mu*mum1*mum1*y2 + 3*mu*mu*mum1*y3 + mu3*y4;
 }
 
+class Canvas {
+public:
+	typedef agg::renderer_base<pixfmt> renderer_base_type;
+	typedef agg::renderer_scanline_aa_solid<renderer_base_type> renderer_scanline;
+	typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
+	typedef agg::scanline_u8 scanline;
 
+////////////////////////////
+// RAS
+	template<class VertexSource>
+	void DrawPath(VertexSource& vs, agg::rgba8 color, unsigned path_id = 0) {
+		add_path(vs, path_id);
+		ren.color(color);
+		agg::render_scanlines(ras, sl, ren)
+	}
 
+//////////////////////////
+// REN
+	void attach(renderer_base_type& ren_base) {
+		ren.attach(ren_base);
+	}
 
-class the_application : public agg::Widget
-{
-    agg::rgba8 m_ctrl_color;
-    agg::bezier_ctrl<agg::rgba8> m_curve1;
-    agg::slider_ctrl<agg::rgba8> m_angle_tolerance;
-    agg::slider_ctrl<agg::rgba8> m_approximation_scale;
-    agg::slider_ctrl<agg::rgba8> m_cusp_limit;
-    agg::slider_ctrl<agg::rgba8> m_width;
-    agg::cbox_ctrl<agg::rgba8>   m_show_points;
-    agg::cbox_ctrl<agg::rgba8>   m_show_outline;
-    agg::rbox_ctrl<agg::rgba8>   m_curve_type;
-    agg::rbox_ctrl<agg::rgba8>   m_case_type;
-    agg::rbox_ctrl<agg::rgba8>   m_inner_join;
-    agg::rbox_ctrl<agg::rgba8>   m_line_join;
-    agg::rbox_ctrl<agg::rgba8>   m_line_cap;
+	void color(const agg::rgba8& c) { ren.color(c); }
+	const agg::rgba8& color() const { return ren.color(); }
 
-    int m_cur_case_type;
+	rasterizer_scanline ras;
+	scanline sl;
+	renderer_scanline ren;
+};
+
+class the_application : public agg::Widget {
+	agg::rgba8 m_ctrl_color;
+	agg::BezierCtrl m_curve1;
+	agg::SliderCtrl m_angle_tolerance;
+	agg::SliderCtrl m_approximation_scale;
+	agg::SliderCtrl m_cusp_limit;
+	agg::SliderCtrl m_width;
+	agg::CBoxCtrl m_show_points;
+	agg::CBoxCtrl m_show_outline;
+	agg::RBoxCtrl m_curve_type;
+	agg::RBoxCtrl m_case_type;
+	agg::RBoxCtrl m_inner_join;
+	agg::RBoxCtrl m_line_join;
+	agg::RBoxCtrl m_line_cap;
+
+	int m_cur_case_type;
 
 public:
-    typedef agg::renderer_base<pixfmt> renderer_base;
-    typedef agg::renderer_scanline_aa_solid<renderer_base> renderer_scanline;
-    typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
-    typedef agg::scanline_u8 scanline;
+	typedef agg::renderer_base<pixfmt> renderer_base_type;
+	typedef agg::renderer_scanline_aa_solid<renderer_base_type> renderer_scanline;
+	typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
+	typedef agg::scanline_u8 scanline;
+
+  the_application(agg::pix_format_e format, bool flip_y) :
+    agg::Widget(format, flip_y),
+    m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
+    m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
+    m_approximation_scale(5.0,    17+5.0, 240.0,    17+12.0,  !flip_y),
+    m_cusp_limit         (5.0, 17+17+5.0, 240.0, 17+17+12.0,  !flip_y),
+    m_width              (245.0,     5.0, 495.0,       12.0,  !flip_y),
+    m_show_points        (250.0, 15+5, "Show Points",         !flip_y),
+    m_show_outline       (250.0, 30+5, "Show Stroke Outline", !flip_y),
+    m_curve_type         (535.0,   5.0, 535.0+115.0,   55.0,  !flip_y),
+    m_case_type          (535.0,  60.0, 535.0+115.0,   195.0, !flip_y),
+    m_inner_join         (535.0, 200.0, 535.0+115.0,   290.0, !flip_y),
+    m_line_join          (535.0, 295.0, 535.0+115.0,   385.0, !flip_y),
+    m_line_cap           (535.0, 395.0, 535.0+115.0,   455.0, !flip_y),
+    m_cur_case_type(-1)
+	{
+		m_curve1.line_color(m_ctrl_color);
+		m_curve1.curve(170, 424, 13, 87, 488, 423, 26, 333);
+		//m_curve1.curve(26.000, 333.000, 276.000, 126.000, 402.000, 479.000, 26.000, 333.000); // Loop with p1==p4
+		//m_curve1.curve(378.000, 439.000, 378.000, 497.000, 487.000, 432.000, 14.000, 338.000); // Narrow loop
+		//m_curve1.curve(288.000, 283.000, 232.000, 89.000, 66.000, 197.000, 456.000, 241.000); // Loop
+		//m_curve1.curve(519.000, 142.000, 97.000, 147.000, 69.000, 147.000, 30.000, 144.000); // Almost straight
+		//m_curve1.curve(100, 100, 200, 100, 100, 200, 200, 200); // A "Z" case
+		//m_curve1.curve(150, 150, 350, 150, 150, 150, 350, 150); // Degenerate
+		//m_curve1.curve(409, 330, 300, 200, 200, 200, 401, 263); // Strange cusp
+		//m_curve1.curve(129, 233, 172, 320, 414, 253, 344, 236); // Curve cap
+		//m_curve1.curve(100,100, 100,200, 100,100, 110,100); // A "boot"
+		//m_curve1.curve(225, 150, 60, 150, 460, 150, 295, 150); // 2----1----4----3
+		//m_curve1.curve(162.2, 248.801, 162.2, 248.801, 266, 284, 394, 335);  // Coinciding 1-2
+		//m_curve1.curve(162.200, 248.801, 162.200, 248.801, 257.000, 301.000, 394.000, 335.000); // Coinciding 1-2
+		//m_curve1.curve(394.000, 335.000, 257.000, 301.000, 162.200, 248.801, 162.200, 248.801); // Coinciding 3-4
+		//m_curve1.curve(84.200000,302.80100, 84.200000,302.80100, 79.000000,292.40100, 97.001000,304.40100); // From tiger.svg
+		//m_curve1.curve(97.001000,304.40100, 79.000000,292.40100, 84.200000,302.80100, 84.200000,302.80100); // From tiger.svg opposite dir
+		//m_curve1.curve(475, 157, 200, 100, 453, 100, 222, 157); // Cusp, failure for Adobe SVG
+		AddChildView(m_curve1);
+		m_curve1.no_transform();
+
+		m_angle_tolerance.label("Angle Tolerance=%.0f deg");
+		m_angle_tolerance.range(0, 90);
+		m_angle_tolerance.value(15);
+		AddChildView(m_angle_tolerance);
+		m_angle_tolerance.no_transform();
+
+		m_approximation_scale.label("Approximation Scale=%.3f");
+		m_approximation_scale.range(0.1, 5);
+		m_approximation_scale.value(1.0);
+		AddChildView(m_approximation_scale);
+		m_approximation_scale.no_transform();
+
+		m_cusp_limit.label("Cusp Limit=%.0f deg");
+		m_cusp_limit.range(0, 90);
+		m_cusp_limit.value(0);
+		AddChildView(m_cusp_limit);
+		m_cusp_limit.no_transform();
+
+		m_width.label("Width=%.2f");
+		m_width.range(-50, 100);
+		m_width.value(50.0);
+		AddChildView(m_width);
+		m_width.no_transform();
+
+		AddChildView(m_show_points);
+		m_show_points.no_transform();
+		m_show_points.status(true);
+
+		AddChildView(m_show_outline);
+		m_show_outline.no_transform();
+		m_show_outline.status(true);
+
+		m_curve_type.add_item("Incremental");
+		m_curve_type.add_item("Subdiv");
+		m_curve_type.cur_item(1);
+		AddChildView(m_curve_type);
+		m_curve_type.no_transform();
+
+		m_case_type.text_size(7);
+		m_case_type.text_thickness(1.0);
+		m_case_type.add_item("Random");
+		m_case_type.add_item("13---24");
+		m_case_type.add_item("Smooth Cusp 1");
+		m_case_type.add_item("Smooth Cusp 2");
+		m_case_type.add_item("Real Cusp 1");
+		m_case_type.add_item("Real Cusp 2");
+		m_case_type.add_item("Fancy Stroke");
+		m_case_type.add_item("Jaw");
+		m_case_type.add_item("Ugly Jaw");
+		AddChildView(m_case_type);
+		m_case_type.no_transform();
+
+		m_inner_join.text_size(8);
+		m_inner_join.add_item("Inner Bevel");
+		m_inner_join.add_item("Inner Miter");
+		m_inner_join.add_item("Inner Jag");
+		m_inner_join.add_item("Inner Round");
+		m_inner_join.cur_item(3);
+		AddChildView(m_inner_join);
+		m_inner_join.no_transform();
+
+		m_line_join.text_size(8);
+		m_line_join.add_item("Miter Join");
+		m_line_join.add_item("Miter Revert");
+		m_line_join.add_item("Round Join");
+		m_line_join.add_item("Bevel Join");
+		m_line_join.add_item("Miter Round");
+
+		m_line_join.cur_item(1);
+		AddChildView(m_line_join);
+		m_line_join.no_transform();
+
+		m_line_cap.text_size(8);
+		m_line_cap.add_item("Butt Cap");
+		m_line_cap.add_item("Square Cap");
+		m_line_cap.add_item("Round Cap");
+		m_line_cap.cur_item(0);
+		AddChildView(m_line_cap);
+		m_line_cap.no_transform();
+	}
 
 
-    the_application(agg::pix_format_e format, bool flip_y) :
-        agg::Widget(format, flip_y),
-        m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
-        m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
-        m_approximation_scale(5.0,    17+5.0, 240.0,    17+12.0,  !flip_y),
-        m_cusp_limit         (5.0, 17+17+5.0, 240.0, 17+17+12.0,  !flip_y),
-        m_width              (245.0,     5.0, 495.0,       12.0,  !flip_y),
-        m_show_points        (250.0, 15+5, "Show Points",         !flip_y),
-        m_show_outline       (250.0, 30+5, "Show Stroke Outline", !flip_y),
-        m_curve_type         (535.0,   5.0, 535.0+115.0,   55.0,  !flip_y),
-        m_case_type          (535.0,  60.0, 535.0+115.0,   195.0, !flip_y),
-        m_inner_join         (535.0, 200.0, 535.0+115.0,   290.0, !flip_y),
-        m_line_join          (535.0, 295.0, 535.0+115.0,   385.0, !flip_y),
-        m_line_cap           (535.0, 395.0, 535.0+115.0,   455.0, !flip_y),
-        m_cur_case_type(-1)
-    {
-        m_curve1.line_color(m_ctrl_color);
-
-        m_curve1.curve(170, 424, 13, 87, 488, 423, 26, 333);
-        //m_curve1.curve(26.000, 333.000, 276.000, 126.000, 402.000, 479.000, 26.000, 333.000); // Loop with p1==p4
-        //m_curve1.curve(378.000, 439.000, 378.000, 497.000, 487.000, 432.000, 14.000, 338.000); // Narrow loop
-        //m_curve1.curve(288.000, 283.000, 232.000, 89.000, 66.000, 197.000, 456.000, 241.000); // Loop
-        //m_curve1.curve(519.000, 142.000, 97.000, 147.000, 69.000, 147.000, 30.000, 144.000); // Almost straight
-        //m_curve1.curve(100, 100, 200, 100, 100, 200, 200, 200); // A "Z" case
-        //m_curve1.curve(150, 150, 350, 150, 150, 150, 350, 150); // Degenerate
-        //m_curve1.curve(409, 330, 300, 200, 200, 200, 401, 263); // Strange cusp
-        //m_curve1.curve(129, 233, 172, 320, 414, 253, 344, 236); // Curve cap
-        //m_curve1.curve(100,100, 100,200, 100,100, 110,100); // A "boot"
-        //m_curve1.curve(225, 150, 60, 150, 460, 150, 295, 150); // 2----1----4----3
-        //m_curve1.curve(162.2, 248.801, 162.2, 248.801, 266, 284, 394, 335);  // Coinciding 1-2
-        //m_curve1.curve(162.200, 248.801, 162.200, 248.801, 257.000, 301.000, 394.000, 335.000); // Coinciding 1-2
-        //m_curve1.curve(394.000, 335.000, 257.000, 301.000, 162.200, 248.801, 162.200, 248.801); // Coinciding 3-4
-        //m_curve1.curve(84.200000,302.80100, 84.200000,302.80100, 79.000000,292.40100, 97.001000,304.40100); // From tiger.svg
-        //m_curve1.curve(97.001000,304.40100, 79.000000,292.40100, 84.200000,302.80100, 84.200000,302.80100); // From tiger.svg opposite dir
-        //m_curve1.curve(475, 157, 200, 100, 453, 100, 222, 157); // Cusp, failure for Adobe SVG
-        AddChildView(m_curve1);
-        m_curve1.no_transform();
-
-        m_angle_tolerance.label("Angle Tolerance=%.0f deg");
-        m_angle_tolerance.range(0, 90);
-        m_angle_tolerance.value(15);
-        AddChildView(m_angle_tolerance);
-        m_angle_tolerance.no_transform();
-
-        m_approximation_scale.label("Approximation Scale=%.3f");
-        m_approximation_scale.range(0.1, 5);
-        m_approximation_scale.value(1.0);
-        AddChildView(m_approximation_scale);
-        m_approximation_scale.no_transform();
-
-        m_cusp_limit.label("Cusp Limit=%.0f deg");
-        m_cusp_limit.range(0, 90);
-        m_cusp_limit.value(0);
-        AddChildView(m_cusp_limit);
-        m_cusp_limit.no_transform();
-
-        m_width.label("Width=%.2f");
-        m_width.range(-50, 100);
-        m_width.value(50.0);
-        AddChildView(m_width);
-        m_width.no_transform();
-
-        AddChildView(m_show_points);
-        m_show_points.no_transform();
-        m_show_points.status(true);
-
-        AddChildView(m_show_outline);
-        m_show_outline.no_transform();
-        m_show_outline.status(true);
-
-        m_curve_type.add_item("Incremental");
-        m_curve_type.add_item("Subdiv");
-        m_curve_type.cur_item(1);
-        AddChildView(m_curve_type);
-        m_curve_type.no_transform();
-
-        m_case_type.text_size(7);
-        m_case_type.text_thickness(1.0);
-        m_case_type.add_item("Random");
-        m_case_type.add_item("13---24");
-        m_case_type.add_item("Smooth Cusp 1");
-        m_case_type.add_item("Smooth Cusp 2");
-        m_case_type.add_item("Real Cusp 1");
-        m_case_type.add_item("Real Cusp 2");
-        m_case_type.add_item("Fancy Stroke");
-        m_case_type.add_item("Jaw");
-        m_case_type.add_item("Ugly Jaw");
-        AddChildView(m_case_type);
-        m_case_type.no_transform();
-
-        m_inner_join.text_size(8);
-        m_inner_join.add_item("Inner Bevel");
-        m_inner_join.add_item("Inner Miter");
-        m_inner_join.add_item("Inner Jag");
-        m_inner_join.add_item("Inner Round");
-        m_inner_join.cur_item(3);
-        AddChildView(m_inner_join);
-        m_inner_join.no_transform();
-
-        m_line_join.text_size(8);
-        m_line_join.add_item("Miter Join");
-        m_line_join.add_item("Miter Revert");
-        m_line_join.add_item("Round Join");
-        m_line_join.add_item("Bevel Join");
-        m_line_join.add_item("Miter Round");
-
-        m_line_join.cur_item(1);
-        AddChildView(m_line_join);
-        m_line_join.no_transform();
-
-        m_line_cap.text_size(8);
-        m_line_cap.add_item("Butt Cap");
-        m_line_cap.add_item("Square Cap");
-        m_line_cap.add_item("Round Cap");
-        m_line_cap.cur_item(0);
-        AddChildView(m_line_cap);
-        m_line_cap.no_transform();
-    }
+	template<class Curve> double measure_time(Curve& curve) {
+		start_timer();
+		for(int i = 0; i < 100; i++) {
+			double x, y;
+			curve.init(
+				m_curve1.x1(), m_curve1.y1(),
+				m_curve1.x2(), m_curve1.y2(),
+				m_curve1.x3(), m_curve1.y3(),
+				m_curve1.x4(), m_curve1.y4());
+			curve.rewind(0);
+			while(!agg::is_stop(curve.vertex(&x, &y)));
+		}
+		return elapsed_time() * 10;
+	}
 
 
-    template<class Curve> double measure_time(Curve& curve)
-    {
-        start_timer();
-        for(int i = 0; i < 100; i++)
-        {
-            double x, y;
-            curve.init(m_curve1.x1(), m_curve1.y1(),
-                       m_curve1.x2(), m_curve1.y2(),
-                       m_curve1.x3(), m_curve1.y3(),
-                       m_curve1.x4(), m_curve1.y4());
-            curve.rewind(0);
-            while(!agg::is_stop(curve.vertex(&x, &y)));
-        }
-        return elapsed_time() * 10;
-    }
-
-
-    template<class Path> 
-    bool find_point(const Path& path, double dist, unsigned* i, unsigned* j)
-    {
-        int k;
-        *j = path.size() - 1;
+	template<class Path> 
+	bool find_point(const Path& path, double dist, unsigned* i, unsigned* j) {
+		int k;
+		*j = path.size() - 1;
           
-        for(*i = 0; (*j - *i) > 1; ) 
-        {
-            if(dist < path[k = (*i + *j) >> 1].dist) *j = k; 
-            else                                     *i = k;
-        }
-        return true;
-    }
+		for(*i = 0; (*j - *i) > 1; ) {
+			if(dist < path[k = (*i + *j) >> 1].dist) *j = k; 
+			else *i = k;
+		}
+		return true;
+	}
 
-    struct curve_point
-    {
-        curve_point() {}
-        curve_point(double x1, double y1, double mu1) : x(x1), y(y1), mu(mu1) {}
-        double x, y, dist, mu;
-    };
+	struct curve_point {
+		curve_point() {}
+		curve_point(double x1, double y1, double mu1) : x(x1), y(y1), mu(mu1) {}
+		double x, y, dist, mu;
+	};
 
-    template<class Curve> double calc_max_error(Curve& curve, double scale, 
-                                                double* max_angle_error)
-    {
+    template<class Curve> double calc_max_error(Curve& curve, double scale,  double* max_angle_error) {
         curve.approximation_scale(m_approximation_scale.value() * scale);
-        curve.init(m_curve1.x1(), m_curve1.y1(),
-                   m_curve1.x2(), m_curve1.y2(),
-                   m_curve1.x3(), m_curve1.y3(),
-                   m_curve1.x4(), m_curve1.y4());
+        curve.init(
+					m_curve1.x1(), m_curve1.y1(),
+					m_curve1.x2(), m_curve1.y2(),
+					m_curve1.x3(), m_curve1.y3(),
+					m_curve1.x4(), m_curve1.y4());
 
         agg::pod_bvector<agg::vertex_dist, 8> curve_points;
         unsigned cmd;
@@ -317,8 +336,8 @@ public:
     virtual void on_draw()
     {
         pixfmt pf(rbuf_window());
-        renderer_base ren_base(pf);
-        ren_base.clear(agg::rgba(1.0, 1.0, 0.95));
+        renderer_base_type ren_base(pf);
+        ren_base.clear(agg::rgba8(255, 255, 255));
         renderer_scanline ren(ren_base);
 
         rasterizer_scanline ras;
@@ -461,7 +480,7 @@ public:
         t.text(buf);
 
         ras.add_path(pt);
-        ren.color(agg::rgba(0,0,0));
+        ren.color(agg::rgba8(0,0,0));
         agg::render_scanlines(ras, sl, ren);
 
         agg::render_ctrl(ras, sl, ren_base, m_curve1);
@@ -550,13 +569,11 @@ public:
 };
 
 
-int agg_main(int argc, char* argv[])
-{
-    the_application app(agg::pix_format_bgr24, flip_y);
-    app.caption("AGG Example");
-    if(app.init(655, 520, agg::window_resize))
-    {
-        return app.run();
-    }
-    return 1;
+int agg_main(int argc, char* argv[]) {
+	the_application app(agg::pix_format_bgr24, flip_y);
+	app.caption("AGG Example");
+	if(app.init(655, 520, agg::window_resize)) {
+		return app.run();
+	}
+	return 1;
 }

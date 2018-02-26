@@ -299,8 +299,8 @@ enum flip_y_e { flip_y = true };
 
 class the_application : public agg::Widget
 {
-    agg::rbox_ctrl<agg::rgba8>    m_method;
-    agg::slider_ctrl<agg::rgba8>  m_radius;
+    agg::RBoxCtrl<agg::rgba8>    m_method;
+    agg::SliderCtrl<agg::rgba8>  m_radius;
     agg::polygon_ctrl<agg::rgba8> m_shadow_ctrl;
 
     agg::path_storage             m_path;
