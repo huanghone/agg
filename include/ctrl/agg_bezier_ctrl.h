@@ -31,7 +31,7 @@
 #include "agg_conv_stroke.h"
 #include "agg_conv_curve.h"
 #include "agg_polygon_ctrl.h"
-
+#include "canvas.hh"
 
 namespace agg {
 
@@ -94,7 +94,15 @@ private:
 class BezierCtrl: public BezierCtrlBase {
 public:
   BezierCtrl():m_color(rgba8(0, 0, 0)) { }
-          
+
+	virtual void Paint(Canvas& canvas) override {
+		unsigned i;
+		for (i = 0; i < num_paths(); i++) {
+			canvas.reset();
+			canvas.DrawPath(*this, color(i), i);
+		}
+	}
+
   void line_color(const agg::rgba8& c) { m_color = c; }
   const agg::rgba8& color(unsigned i) const { return m_color; }
 
@@ -145,7 +153,6 @@ public:
 	unsigned num_paths() { return 6; };
 	void rewind(unsigned path_id);
 	unsigned vertex(double* x, double* y);
-
 
 private:
   curve3 m_curve;

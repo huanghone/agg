@@ -207,7 +207,7 @@ void fill_color_array(ColorArrayT& array,
 class the_application : public agg::Widget
 {
     gamma_lut_type              m_gamma;
-    agg::SliderCtrl<agg::rgba> m_slider_gamma;
+    agg::SliderCtrl m_slider_gamma;
 
 public:
     the_application(agg::pix_format_e format, bool flip_y) :

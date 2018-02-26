@@ -85,6 +85,14 @@ public:
 		m_colors[1] = &m_text_color;
 		m_colors[2] = &m_active_color;
 	}
+
+	virtual void Paint(Canvas& canvas) override {
+		unsigned i;
+		for (i = 0; i < num_paths(); i++) {
+			canvas.reset();
+			canvas.DrawPath(*this, color(i), i);
+		}
+	}
           
 	void text_color(const rgba8& c) { m_text_color = c; }
 	void inactive_color(const rgba8& c) { m_inactive_color = c; }

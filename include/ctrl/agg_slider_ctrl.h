@@ -116,7 +116,14 @@ public:
 		m_colors[4] = &m_pointer_color;
 		m_colors[5] = &m_text_color;
 	}
-          
+
+	virtual void Paint(Canvas& canvas) override {
+		unsigned i;
+		for (i = 0; i < num_paths(); i++) {
+			canvas.reset();
+			canvas.DrawPath(*this, color(i), i);
+		}
+	}
 
 	void background_color(const rgba8& c) { m_background_color = c; }
 	void pointer_color(const rgba8& c) { m_pointer_color = c; }

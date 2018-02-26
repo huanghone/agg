@@ -113,7 +113,14 @@ public:
 		m_colors[3] = &m_inactive_color;
 		m_colors[4] = &m_active_color;
   }
-          
+
+	virtual void Paint(Canvas& canvas) override {
+		unsigned i;
+		for (i = 0; i < num_paths(); i++) {
+			canvas.reset();
+			canvas.DrawPath(*this, color(i), i);
+		}
+	}
 
   void background_color(const rgba8& c) { m_background_color = c; }
   void border_color(const rgba8& c) { m_border_color = c; }

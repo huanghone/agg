@@ -22,6 +22,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 #####################################
 
 set(INC_DIR
+	src
 	include
 	font_win32_tt
 	#${FREETYPE_INCLUDE_DIRS}
@@ -65,7 +66,7 @@ set(DEP_LIBS
 # agg libs
 #####################################
 
-file(GLOB agg_SRC src/*.cpp)
+file(GLOB agg_SRC src/*.cpp src/*.hh)
 source_group("" FILES ${agg_SRC})
 
 file(GLOB agg_INC include/*.h)
@@ -96,13 +97,13 @@ source_group("font_win32_tt" FILES ${font_win32_tt_SRC})
 #source_group("font_freetype" FILES ${font_freetype_SRC})
 
 add_library(agg 
-${agg_SRC} ${agg_INC} 
-${agg_ctrl_SRC} ${agg_ctrl_INC} 
-${agg_platform_SRC} ${agg_platform_INC}
-${util_INC}
-${gpc_SRC}
-${font_win32_tt_SRC})
-#${font_freetype_SRC})
+	${agg_SRC} ${agg_INC} 
+	${agg_ctrl_SRC} ${agg_ctrl_INC} 
+	${agg_platform_SRC} ${agg_platform_INC}
+	${util_INC}
+	${gpc_SRC}
+	${font_win32_tt_SRC}
+)
 
 set(DEP_LIBS ${DEP_LIBS} agg)
 

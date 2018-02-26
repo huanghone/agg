@@ -30,6 +30,8 @@
 #include "agg_trans_affine.h"
 #include "agg_renderer_scanline.h"
 
+#include "canvas.hh"
+
 namespace agg {
 
 class View {
@@ -46,6 +48,8 @@ public:
 	void add(View& c) {
 		child_views_.push_back(&c);
 	}
+
+	virtual void Paint(Canvas& canvas) {}
 
 	virtual bool in_rect(double x, double y) const { return true; }
 	virtual bool on_mouse_button_down(double x, double y) { return true; }

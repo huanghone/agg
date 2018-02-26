@@ -32,8 +32,7 @@ namespace agg
 {
 
     //-----------------------------------------------------------renderer_base
-    template<class PixelFormat> class renderer_base
-    {
+    template<class PixelFormat> class renderer_base {
     public:
         typedef PixelFormat pixfmt_type;
         typedef typename pixfmt_type::color_type color_type;

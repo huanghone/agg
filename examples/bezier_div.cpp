@@ -20,7 +20,7 @@
 #include "ctrl/agg_rbox_ctrl.h"
 #include "ctrl/agg_cbox_ctrl.h"
 #include "platform/agg_platform_support.h"
-
+#include "canvas.hh"
 
 enum flip_y_e { flip_y = true };
 
@@ -42,42 +42,8 @@ void bezier4_point(double x1, double y1, double x2, double y2,
    *y = mum13*y1 + 3*mu*mum1*mum1*y2 + 3*mu*mu*mum1*y3 + mu3*y4;
 }
 
-class Canvas {
-public:
-	typedef agg::renderer_base<pixfmt> renderer_base_type;
-	typedef agg::renderer_scanline_aa_solid<renderer_base_type> renderer_scanline;
-	typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
-	typedef agg::scanline_u8 scanline;
-
-////////////////////////////
-// RAS
-	void reset() {
-		ras.reset();
-	}
-
-	template<class VertexSource>
-	void DrawPath(VertexSource& vs, agg::rgba8 color, unsigned path_id = 0) {
-		ras.add_path(vs, path_id);
-		ren.color(color);
-		agg::render_scanlines(ras, sl, ren);
-	}
-
-//////////////////////////
-// REN
-	void attach(renderer_base_type& ren_base) {
-		ren.attach(ren_base);
-	}
-
-	void color(const agg::rgba8& c) { ren.color(c); }
-	const agg::rgba8& color() const { return ren.color(); }
-
-	rasterizer_scanline ras;
-	scanline sl;
-	renderer_scanline ren;
-};
-
-template<class CanvasT, class Ctrl>
-void render_ctrl(CanvasT& canvas, Ctrl& c) {
+template<class Ctrl>
+void render_ctrl(Canvas& canvas, Ctrl& c) {
 	unsigned i;
 	for (i = 0; i < c.num_paths(); i++) {
 		canvas.reset();
@@ -85,7 +51,7 @@ void render_ctrl(CanvasT& canvas, Ctrl& c) {
 	}
 }
 
-class the_application : public agg::Widget {
+class MainWindow : public agg::Widget {
 	agg::rgba8 m_ctrl_color;
 	agg::BezierCtrl m_curve1;
 	agg::SliderCtrl m_angle_tolerance;
@@ -104,11 +70,8 @@ class the_application : public agg::Widget {
 
 public:
 	typedef agg::renderer_base<pixfmt> renderer_base_type;
-	typedef agg::renderer_scanline_aa_solid<renderer_base_type> renderer_scanline;
-	typedef agg::rasterizer_scanline_aa<> rasterizer_scanline;
-	typedef agg::scanline_u8 scanline;
 
-  the_application(agg::pix_format_e format, bool flip_y) :
+  MainWindow(agg::pix_format_e format, bool flip_y) :
     agg::Widget(format, flip_y),
     m_ctrl_color(agg::rgba(0, 0.3, 0.5, 0.8)),
     m_angle_tolerance    (5.0,       5.0, 240.0,       12.0,  !flip_y),
@@ -415,6 +378,7 @@ public:
 
 		while(!agg::is_stop(cmd = path.vertex(&x, &y))) {
 			if(m_show_points.status()) {
+				//DrawEllipse()
 				agg::ellipse ell(x, y, 1.5, 1.5, 8);
 				canvas.DrawPath(ell, agg::rgba(0, 0, 0, 0.5));
 			}
@@ -487,18 +451,18 @@ public:
 
 		canvas.DrawPath(pt, agg::rgba8(0, 0, 0));
 
-		render_ctrl(canvas, m_curve1);
-		render_ctrl(canvas, m_angle_tolerance);
-		render_ctrl(canvas, m_approximation_scale);
-		render_ctrl(canvas, m_cusp_limit);
-		render_ctrl(canvas, m_width);
-		render_ctrl(canvas, m_show_points);
-		render_ctrl(canvas, m_show_outline);
-		render_ctrl(canvas, m_curve_type);
-		render_ctrl(canvas, m_case_type);
-		render_ctrl(canvas, m_inner_join);
-		render_ctrl(canvas, m_line_join);
-		render_ctrl(canvas, m_line_cap);
+		m_curve1.Paint(canvas);
+		m_angle_tolerance.Paint(canvas);
+		m_approximation_scale.Paint(canvas);
+		m_cusp_limit.Paint(canvas);
+		m_width.Paint(canvas);
+		m_show_points.Paint(canvas);
+		m_show_outline.Paint(canvas);
+		m_curve_type.Paint(canvas);
+		m_case_type.Paint(canvas);
+		m_inner_join.Paint(canvas);
+		m_line_join.Paint(canvas);
+		m_line_cap.Paint(canvas);
 	}
 
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {
@@ -567,12 +531,11 @@ public:
 	}
 };
 
-
 int agg_main(int argc, char* argv[]) {
-	the_application app(agg::pix_format_bgr24, flip_y);
-	app.caption("AGG Example");
-	if(app.init(655, 520, agg::window_resize)) {
-		return app.run();
+	MainWindow main_wnd(agg::pix_format_bgr24, flip_y);
+	main_wnd.caption("AGG Example");
+	if(main_wnd.init(655, 520, agg::window_resize)) {
+		return main_wnd.run();
 	}
 	return 1;
 }
