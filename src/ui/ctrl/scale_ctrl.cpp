@@ -1,34 +1,10 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include "ui/ctrl/scale_ctrl.h"
 
 namespace agg
 {
 
     //------------------------------------------------------------------------
-    scale_ctrl_impl::scale_ctrl_impl(double x1, double y1, 
+    ScaleCtrlBase::ScaleCtrlBase(double x1, double y1, 
                                      double x2, double y2, bool flip_y) :
         View(x1, y1, x2, y2, flip_y),
         m_border_thickness(1.0),
@@ -45,7 +21,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::calc_box()
+    void ScaleCtrlBase::calc_box()
     {
         m_xs1 = m_x1 + m_border_thickness;
         m_ys1 = m_y1 + m_border_thickness;
@@ -55,7 +31,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::border_thickness(double t, double extra)
+    void ScaleCtrlBase::border_thickness(double t, double extra)
     { 
         m_border_thickness = t; 
         m_border_extra = extra;
@@ -64,7 +40,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::resize(double x1, double y1, double x2, double y2)
+    void ScaleCtrlBase::resize(double x1, double y1, double x2, double y2)
     {
         m_x1 = x1;
         m_y1 = y1;
@@ -78,7 +54,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::value1(double value) 
+    void ScaleCtrlBase::value1(double value) 
     { 
         if(value < 0.0) value = 0.0;
         if(value > 1.0) value = 1.0;
@@ -88,7 +64,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::value2(double value) 
+    void ScaleCtrlBase::value2(double value) 
     { 
         if(value < 0.0) value = 0.0;
         if(value > 1.0) value = 1.0;
@@ -98,7 +74,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::move(double d)
+    void ScaleCtrlBase::move(double d)
     {
         m_value1 += d;
         m_value2 += d;
@@ -116,7 +92,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void scale_ctrl_impl::rewind(unsigned idx)
+    void ScaleCtrlBase::rewind(unsigned idx)
     {
         m_idx = idx;
 
@@ -226,7 +202,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned scale_ctrl_impl::vertex(double* x, double* y)
+    unsigned ScaleCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_line_to;
         switch(m_idx)
@@ -269,7 +245,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool scale_ctrl_impl::in_rect(double x, double y) const
+    bool ScaleCtrlBase::in_rect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
@@ -277,7 +253,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool scale_ctrl_impl::on_mouse_button_down(double x, double y)
+    bool ScaleCtrlBase::on_mouse_button_down(double x, double y)
     {
         inverse_transform_xy(&x, &y);
 
@@ -356,7 +332,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool scale_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
+    bool ScaleCtrlBase::on_mouse_move(double x, double y, bool button_flag)
     {
         inverse_transform_xy(&x, &y);
         if(!button_flag)
@@ -427,7 +403,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool scale_ctrl_impl::on_mouse_button_up(double, double)
+    bool ScaleCtrlBase::on_mouse_button_up(double, double)
     {
         m_move_what = move_nothing;
         return false;
@@ -435,7 +411,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool scale_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool ScaleCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
     {
 /*
         if(right || up)

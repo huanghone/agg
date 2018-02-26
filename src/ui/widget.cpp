@@ -25,7 +25,7 @@
 #include <windows.h>
 #include <string.h>
 #include "ui/widget.h"
-#include "ui/agg_win32_bmp.h"
+#include "ui/pixmap.h"
 #include "gfx/agg_color_conv_rgb8.h"
 #include "gfx/agg_color_conv_rgb16.h"
 
@@ -949,204 +949,166 @@ namespace agg
     // CommandLineToArgv() but first, it returns Unicode that I don't
     // need to deal with, but most of all, it's not compatible with Win98.
     //-----------------------------------------------------------------------
-    class tokenizer
-    {
-    public:
-        enum sep_flag
-        {
-            single,
-            multiple,
-            whole_str
-        };
+class tokenizer {
+public:
+	enum sep_flag {
+		single,
+		multiple,
+		whole_str
+	};
 
-        struct token
-        {
-            const char* ptr;
-            unsigned    len;
-        };
+	struct token {
+		const char* ptr;
+		unsigned    len;
+	};
 
-    public:
-        tokenizer(const char* sep, 
-                  const char* trim=0,
-                  const char* quote="\"",
-                  char mask_chr='\\',
-                  sep_flag sf=multiple);
+public:
+	tokenizer(
+		const char* sep, 
+		const char* trim=0,
+		const char* quote="\"",
+		char mask_chr='\\',
+		sep_flag sf=multiple);
 
-        void  set_str(const char* str);
-        token next_token();
+	void  set_str(const char* str);
+	token next_token();
 
-    private:
-        int  check_chr(const char *str, char chr);
+private:
+	int  check_chr(const char *str, char chr);
 
-    private:
-        const char* m_src_string;
-        int         m_start;
-        const char* m_sep;
-        const char* m_trim;
-        const char* m_quote;
-        char        m_mask_chr;
-        unsigned    m_sep_len;
-        sep_flag    m_sep_flag;
-    };
+private:
+	const char* m_src_string;
+	int         m_start;
+	const char* m_sep;
+	const char* m_trim;
+	const char* m_quote;
+	char        m_mask_chr;
+	unsigned    m_sep_len;
+	sep_flag    m_sep_flag;
+};
 
-    inline void tokenizer::set_str(const char* str) 
-    { 
-        m_src_string = str; 
-        m_start = 0;
+inline void tokenizer::set_str(const char* str) {
+  m_src_string = str; 
+  m_start = 0;
+}
+
+inline int tokenizer::check_chr(const char *str, char chr) {
+  return int(strchr(str, chr));
+}
+
+tokenizer::tokenizer(const char* sep, const char* trim, const char* quote, char mask_chr, sep_flag sf) :
+	m_src_string(0),
+	m_start(0),
+	m_sep(sep),
+	m_trim(trim),
+	m_quote(quote),
+	m_mask_chr(mask_chr),
+	m_sep_len(sep ? strlen(sep) : 0),
+	m_sep_flag(sep ? sf : single)
+{}
+
+tokenizer::token tokenizer::next_token() {
+	unsigned count = 0;
+	char quote_chr = 0;
+	token tok;
+
+	tok.ptr = 0;
+	tok.len = 0;
+	if(m_src_string == 0 || m_start == -1) return tok;
+
+	register const char *pstr = m_src_string + m_start;
+
+	if(*pstr == 0) {
+		m_start = -1;
+		return tok;
+	}
+
+	int sep_len = 1;
+	if(m_sep_flag == whole_str) sep_len = m_sep_len;
+
+	if(m_sep_flag == multiple) {
+		//Pass all the separator symbols at the begin of the string
+		while(*pstr && check_chr(m_sep, *pstr)) {
+			++pstr;
+			++m_start;
+		}
+	}
+
+	if(*pstr == 0) {
+		m_start = -1;
+		return tok;
+	}
+
+  for(count = 0;; ++count) {
+    char c = *pstr;
+    int found = 0;
+
+    //We are outside of qotation: find one of separator symbols
+    if(quote_chr == 0) {
+      if(sep_len == 1) {
+				found = check_chr(m_sep, c);
+      } else {
+				found = strncmp(m_sep, pstr, m_sep_len) == 0; 
+      }
     }
 
-    inline int tokenizer::check_chr(const char *str, char chr)
-    {
-        return int(strchr(str, chr));
+    ++pstr;
+
+    if(c == 0 || found) {
+      if(m_trim) {
+        while(count && check_chr(m_trim, m_src_string[m_start])) {
+          ++m_start;
+          --count;
+        }
+
+        while(count && check_chr(m_trim, m_src_string[m_start + count - 1])) {
+					--count;
+        }
+      }
+
+			tok.ptr = m_src_string + m_start;
+			tok.len = count;
+
+      //Next time it will be the next separator character
+      //But we must check, whether it is NOT the end of the string.
+      m_start += count;
+      if(c) {
+        m_start += sep_len;
+        if(m_sep_flag == multiple) {
+          //Pass all the separator symbols 
+          //after the end of the string
+          while(check_chr(m_sep, m_src_string[m_start])) {
+              ++m_start;
+          }
+        }
+      }
+      break;
     }
 
-    tokenizer::tokenizer(const char* sep, 
-                         const char* trim,
-                         const char* quote,
-                         char mask_chr,
-                         sep_flag sf) :
-        m_src_string(0),
-        m_start(0),
-        m_sep(sep),
-        m_trim(trim),
-        m_quote(quote),
-        m_mask_chr(mask_chr),
-        m_sep_len(sep ? strlen(sep) : 0),
-        m_sep_flag(sep ? sf : single)
-    {
-    }
-
-
-    //-----------------------------------------------------------------------
-    tokenizer::token tokenizer::next_token()
-    {
-        unsigned count = 0;
-        char quote_chr = 0;
-        token tok;
-
-        tok.ptr = 0;
-        tok.len = 0;
-        if(m_src_string == 0 || m_start == -1) return tok;
-
-        register const char *pstr = m_src_string + m_start;
-
-        if(*pstr == 0) 
-        {
-            m_start = -1;
-            return tok;
-        }
-
-        int sep_len = 1;
-        if(m_sep_flag == whole_str) sep_len = m_sep_len;
-
-        if(m_sep_flag == multiple)
-        {
-            //Pass all the separator symbols at the begin of the string
-            while(*pstr && check_chr(m_sep, *pstr)) 
-            {
-                ++pstr;
-                ++m_start;
-            }
-        }
-
-        if(*pstr == 0) 
-        {
-            m_start = -1;
-            return tok;
-        }
-
-        for(count = 0;; ++count) 
-        {
-            char c = *pstr;
-            int found = 0;
-
-            //We are outside of qotation: find one of separator symbols
-            if(quote_chr == 0)
-            {
-                if(sep_len == 1)
-                {
-                    found = check_chr(m_sep, c);
-                }
-                else
-                {
-                    found = strncmp(m_sep, pstr, m_sep_len) == 0; 
-                }
-            }
-
-            ++pstr;
-
-            if(c == 0 || found) 
-            {
-                if(m_trim)
-                {
-                    while(count && 
-                          check_chr(m_trim, m_src_string[m_start]))
-                    {
-                        ++m_start;
-                        --count;
-                    }
-
-                    while(count && 
-                          check_chr(m_trim, m_src_string[m_start + count - 1]))
-                    {
-                        --count;
-                    }
-                }
-
-                tok.ptr = m_src_string + m_start;
-                tok.len = count;
-
-                //Next time it will be the next separator character
-                //But we must check, whether it is NOT the end of the string.
-                m_start += count;
-                if(c) 
-                {
-                    m_start += sep_len;
-                    if(m_sep_flag == multiple)
-                    {
-                        //Pass all the separator symbols 
-                        //after the end of the string
-                        while(check_chr(m_sep, m_src_string[m_start])) 
-                        {
-                            ++m_start;
-                        }
-                    }
-                }
-                break;
-            }
-
-            //Switch quote. If it is not a quote yet, try to check any of
-            //quote symbols. Otherwise quote must be finished with quote_symb
-            if(quote_chr == 0)
-            {
-                if(check_chr(m_quote, c)) 
-                {
-                    quote_chr = c;
-                    continue;
-                }
-            }
-            else
-            {
-                //We are inside quote: pass all the mask symbols
-                if(m_mask_chr && c == m_mask_chr)
-                {
-                    if(*pstr) 
-                    {
-                        ++count;
-                        ++pstr;
-                    }
-                    continue; 
-                }
-                if(c == quote_chr) 
-                {
-                    quote_chr = 0;
-                    continue;
-                }
-            }
-        }
-        return tok;
-    }
-
+		//Switch quote. If it is not a quote yet, try to check any of
+		//quote symbols. Otherwise quote must be finished with quote_symb
+		if(quote_chr == 0) {
+			if(check_chr(m_quote, c)) {
+				quote_chr = c;
+				continue;
+			}
+		}	else {
+			//We are inside quote: pass all the mask symbols
+			if(m_mask_chr && c == m_mask_chr) {
+				if(*pstr) {
+					++count;
+					++pstr;
+				}
+				continue; 
+			}
+			if(c == quote_chr) {
+				quote_chr = 0;
+				continue;
+			}
+		}
+  }
+  return tok;
+}
 
 }
 

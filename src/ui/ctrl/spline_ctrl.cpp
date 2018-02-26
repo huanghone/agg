@@ -1,35 +1,8 @@
-//----------------------------------------------------------------------------
-// Anti-Grain Geometry (AGG) - Version 2.5
-// A high quality rendering engine for C++
-// Copyright (C) 2002-2006 Maxim Shemanarev
-// Contact: mcseem@antigrain.com
-//          mcseemagg@yahoo.com
-//          http://antigrain.com
-// 
-// AGG is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-// 
-// AGG is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with AGG; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
-// MA 02110-1301, USA.
-//----------------------------------------------------------------------------
-
 #include "ui/ctrl/spline_ctrl.h"
 
+namespace agg {
 
-namespace agg
-{
-
-    //------------------------------------------------------------------------
-    spline_ctrl_impl::spline_ctrl_impl(double x1, double y1, double x2, double y2, 
+    SplineCtrlBase::SplineCtrlBase(double x1, double y1, double x2, double y2, 
                                        unsigned num_pnt, bool flip_y) :
         View(x1, y1, x2, y2, flip_y),
         m_num_pnt(num_pnt),
@@ -60,7 +33,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::border_width(double t, double extra)
+    void SplineCtrlBase::border_width(double t, double extra)
     { 
         m_border_width = t; 
         m_border_extra = extra;
@@ -69,7 +42,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::calc_spline_box()
+    void SplineCtrlBase::calc_spline_box()
     {
         m_xs1 = m_x1 + m_border_width;
         m_ys1 = m_y1 + m_border_width;
@@ -79,7 +52,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::update_spline()
+    void SplineCtrlBase::update_spline()
     {
         int i;
         m_spline.init(m_num_pnt, m_xp, m_yp);
@@ -94,7 +67,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::calc_curve()
+    void SplineCtrlBase::calc_curve()
     {
         int i;
         m_curve_pnt.remove_all();
@@ -108,21 +81,21 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    double spline_ctrl_impl::calc_xp(unsigned idx)
+    double SplineCtrlBase::calc_xp(unsigned idx)
     {
         return m_xs1 + (m_xs2 - m_xs1) * m_xp[idx];
     }
 
 
     //------------------------------------------------------------------------
-    double spline_ctrl_impl::calc_yp(unsigned idx)
+    double SplineCtrlBase::calc_yp(unsigned idx)
     {
         return m_ys1 + (m_ys2 - m_ys1) * m_yp[idx];
     }
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::set_xp(unsigned idx, double val)
+    void SplineCtrlBase::set_xp(unsigned idx, double val)
     {
         if(val < 0.0) val = 0.0;
         if(val > 1.0) val = 1.0;
@@ -144,7 +117,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::set_yp(unsigned idx, double val)
+    void SplineCtrlBase::set_yp(unsigned idx, double val)
     {
         if(val < 0.0) val = 0.0;
         if(val > 1.0) val = 1.0;
@@ -153,7 +126,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::point(unsigned idx, double x, double y)
+    void SplineCtrlBase::point(unsigned idx, double x, double y)
     {
         if(idx < m_num_pnt) 
         {
@@ -164,7 +137,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::value(unsigned idx, double y)
+    void SplineCtrlBase::value(unsigned idx, double y)
     {
         if(idx < m_num_pnt) 
         {
@@ -173,7 +146,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    double spline_ctrl_impl::value(double x) const
+    double SplineCtrlBase::value(double x) const
     { 
         x = m_spline.get(x);
         if(x < 0.0) x = 0.0;
@@ -183,7 +156,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::rewind(unsigned idx)
+    void SplineCtrlBase::rewind(unsigned idx)
     {
         unsigned i;
 
@@ -264,7 +237,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    unsigned spline_ctrl_impl::vertex(double* x, double* y)
+    unsigned SplineCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_line_to;
         switch(m_idx)
@@ -310,103 +283,82 @@ namespace agg
 
     
     //------------------------------------------------------------------------
-    void spline_ctrl_impl::active_point(int i)
+    void SplineCtrlBase::active_point(int i)
     {
         m_active_pnt = i;
     }
 
 
     //------------------------------------------------------------------------
-    bool spline_ctrl_impl::in_rect(double x, double y) const
+    bool SplineCtrlBase::in_rect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
     }
 
-
-    //------------------------------------------------------------------------
-    bool spline_ctrl_impl::on_mouse_button_down(double x, double y)
+bool SplineCtrlBase::on_mouse_button_down(double x, double y) {
+    inverse_transform_xy(&x, &y);
+    unsigned i;
+    for(i = 0; i < m_num_pnt; i++)  
     {
-        inverse_transform_xy(&x, &y);
-        unsigned i;
-        for(i = 0; i < m_num_pnt; i++)  
+        double xp = calc_xp(i);
+        double yp = calc_yp(i);
+        if(calc_distance(x, y, xp, yp) <= m_point_size + 1)
         {
-            double xp = calc_xp(i);
-            double yp = calc_yp(i);
-            if(calc_distance(x, y, xp, yp) <= m_point_size + 1)
-            {
-                m_pdx = xp - x;
-                m_pdy = yp - y;
-                m_active_pnt = m_move_pnt = int(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    //------------------------------------------------------------------------
-    bool spline_ctrl_impl::on_mouse_button_up(double, double)
-    {
-        if(m_move_pnt >= 0)
-        {
-            m_move_pnt = -1;
+            m_pdx = xp - x;
+            m_pdy = yp - y;
+            m_active_pnt = m_move_pnt = int(i);
             return true;
         }
-        return false;
     }
-
-
-    //------------------------------------------------------------------------
-    bool spline_ctrl_impl::on_mouse_move(double x, double y, bool button_flag)
-    {
-        inverse_transform_xy(&x, &y);
-        if(!button_flag)
-        {
-            return on_mouse_button_up(x, y);
-        }
-
-        if(m_move_pnt >= 0)
-        {
-            double xp = x + m_pdx;
-            double yp = y + m_pdy;
-
-            set_xp(m_move_pnt, (xp - m_xs1) / (m_xs2 - m_xs1));
-            set_yp(m_move_pnt, (yp - m_ys1) / (m_ys2 - m_ys1));
-
-            update_spline();
-            return true;
-        }
-        return false;
-    }
-
-
-    //------------------------------------------------------------------------
-    bool spline_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
-    {
-        double kx = 0.0;
-        double ky = 0.0;
-        bool ret = false;
-        if(m_active_pnt >= 0)
-        {
-            kx = m_xp[m_active_pnt];
-            ky = m_yp[m_active_pnt];
-            if(left)  { kx -= 0.001; ret = true; }
-            if(right) { kx += 0.001; ret = true; }
-            if(down)  { ky -= 0.001; ret = true; }
-            if(up)    { ky += 0.001; ret = true; }
-        }
-        if(ret)
-        {
-            set_xp(m_active_pnt, kx);
-            set_yp(m_active_pnt, ky);
-            update_spline();
-        }
-        return ret;
-    }
-
-
-
-
+    return false;
 }
 
+bool SplineCtrlBase::on_mouse_button_up(double, double) {
+	if(m_move_pnt >= 0) {
+		m_move_pnt = -1;
+		return true;
+	}
+	return false;
+}
+
+bool SplineCtrlBase::on_mouse_move(double x, double y, bool button_flag) {
+	inverse_transform_xy(&x, &y);
+	if(!button_flag) {
+		return on_mouse_button_up(x, y);
+	}
+
+	if(m_move_pnt >= 0) {
+		double xp = x + m_pdx;
+		double yp = y + m_pdy;
+
+		set_xp(m_move_pnt, (xp - m_xs1) / (m_xs2 - m_xs1));
+		set_yp(m_move_pnt, (yp - m_ys1) / (m_ys2 - m_ys1));
+
+		update_spline();
+		return true;
+	}
+	return false;
+}
+
+bool SplineCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up) {
+	double kx = 0.0;
+	double ky = 0.0;
+	bool ret = false;
+	if(m_active_pnt >= 0) {
+		kx = m_xp[m_active_pnt];
+		ky = m_yp[m_active_pnt];
+		if(left)  { kx -= 0.001; ret = true; }
+		if(right) { kx += 0.001; ret = true; }
+		if(down)  { ky -= 0.001; ret = true; }
+		if(up)    { ky += 0.001; ret = true; }
+	}
+	if(ret) {
+		set_xp(m_active_pnt, kx);
+		set_yp(m_active_pnt, ky);
+		update_spline();
+	}
+	return ret;
+}
+
+}
