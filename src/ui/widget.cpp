@@ -62,7 +62,7 @@ public:
 	int           m_cur_y;
 	unsigned      m_input_flags;
 	bool          m_redraw_flag;
-	HDC           m_current_dc;
+	//HDC           m_current_dc;
 	LARGE_INTEGER m_sw_freq;
 	LARGE_INTEGER m_sw_start;
 };
@@ -79,8 +79,8 @@ WidgeImp::WidgeImp(
 	m_cur_x(0),
 	m_cur_y(0),
 	m_input_flags(0),
-	m_redraw_flag(true),
-	m_current_dc(0)
+	m_redraw_flag(true)
+	//m_current_dc(0)
 {
 	memset(m_keymap, 0, sizeof(m_keymap));
 
@@ -500,29 +500,48 @@ void Widget::OnSize(unsigned width, unsigned height) {
 	force_redraw();
 }
 
-void Widget::OnPaint() {
-	HWND hwnd = m_specific->m_hwnd;
+class PaintDC {
+public:
+	PaintDC(HWND hwnd) {
+		hwnd_ = hwnd;
+		hdc = ::BeginPaint(hwnd_, &ps);
+	}
+
+	~PaintDC() {
+		::EndPaint(hwnd_, &ps);
+	}
+
+	operator HDC() {
+		return hdc;
+	}
+
 	PAINTSTRUCT ps;
-	HDC paintDC = ::BeginPaint(hwnd, &ps);
-	m_specific->m_current_dc = paintDC;
+	HWND hwnd_;
+	HDC hdc;
+};
+
+void Widget::OnPaint() {
+	PaintDC dc(m_specific->m_hwnd);
 	if (m_specific->m_redraw_flag) {
 		on_draw();
 		m_specific->m_redraw_flag = false;
 	}
-	m_specific->display_pmap(paintDC, &rbuf_window());
-	on_post_draw(paintDC);
-	m_specific->m_current_dc = 0;
-	::EndPaint(hwnd, &ps);
+	m_specific->display_pmap(dc, &rbuf_window());
+	on_post_draw(dc);
 }
 
-void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
-	::SetCapture(m_specific->m_hwnd);
+void Widget::UpdateCursor(int x, int y) {
 	m_specific->m_cur_x = x;
 	if (flip_y()) {
 		m_specific->m_cur_y = rbuf_window().height() - y;
 	}	else {
 		m_specific->m_cur_y = y;
 	}
+}
+
+void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
+	::SetCapture(m_specific->m_hwnd);
+	UpdateCursor(x, y);
 	m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
 
 	root_view_.set_cur(m_specific->m_cur_x, m_specific->m_cur_y);
@@ -543,12 +562,7 @@ void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
 
 void Widget::OnLButtonUp(int x, int y, WPARAM wParam) {
 	::ReleaseCapture();
-	m_specific->m_cur_x = x;
-	if (flip_y()) {
-		m_specific->m_cur_y = rbuf_window().height() - y;
-	} else {
-		m_specific->m_cur_y = y;
-	}
+	UpdateCursor(x, y);
 	m_specific->m_input_flags = mouse_left | get_key_flags(wParam);
 
 	if (root_view_.OnMouseButtonUp(m_specific->m_cur_x, m_specific->m_cur_y)) {
@@ -560,35 +574,20 @@ void Widget::OnLButtonUp(int x, int y, WPARAM wParam) {
 
 void Widget::OnRButtonDown(int x, int y, WPARAM wParam) {
 	::SetCapture(m_specific->m_hwnd);
-	m_specific->m_cur_x = x;
-	if (flip_y()) {
-		m_specific->m_cur_y = rbuf_window().height() - y;
-	} else {
-		m_specific->m_cur_y = y;
-	}
+	UpdateCursor(x, y);
 	m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
 	OnMouseButtonDown(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 }
 
 void Widget::OnRButtonUp(int x, int y, WPARAM wParam) {
 	::ReleaseCapture();
-	m_specific->m_cur_x = x;
-	if (flip_y()) {
-		m_specific->m_cur_y = y;
-	} else {
-		m_specific->m_cur_y = y;
-	}
+	UpdateCursor(x, y);
 	m_specific->m_input_flags = mouse_right | get_key_flags(wParam);
 	OnMouseButtonUp(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 }
 
 void Widget::OnMouseMove(int x, int y, WPARAM wParam) {
-	m_specific->m_cur_x = x;
-	if (flip_y()) {
-		m_specific->m_cur_y = rbuf_window().height() - y;
-	}	else {
-		m_specific->m_cur_y = y;
-	}
+	UpdateCursor(x, y);
 	m_specific->m_input_flags = get_key_flags(wParam);
 
 	if (root_view_.OnMouseMove(m_specific->m_cur_x, m_specific->m_cur_y, (m_specific->m_input_flags & mouse_left) != 0)) {
@@ -680,7 +679,7 @@ void Widget::OnKeyUp(WPARAM wParam) {
 	}
 }
 
-Widget::Widget(pix_format_e format, bool flip_y) :
+Widget::Widget(pix_format_e format, bool flip_y, Delegate* delegate) :
   m_specific(new WidgeImp(format, flip_y)),
   m_format(format),
   m_bpp(m_specific->m_bpp),
@@ -691,6 +690,7 @@ Widget::Widget(pix_format_e format, bool flip_y) :
   m_initial_height(10)
 {
   strcpy(m_caption, "Anti-Grain Geometry Application");
+	root_view_.AddChild(delegate->GetContentView());
 }
 
 Widget::~Widget() {
@@ -714,10 +714,6 @@ double Widget::elapsed_time() const {
   return double(stop.QuadPart - m_specific->m_sw_start.QuadPart) * 1000.0 / double(m_specific->m_sw_freq.QuadPart);
 }
 
-void* Widget::raw_display_handler() {
-	return m_specific->m_current_dc;
-}
-
 LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static int width, height;
 	void* user_data = reinterpret_cast<Widget*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -735,8 +731,6 @@ LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
     return ::DefWindowProc(hWnd, msg, wParam, lParam);
   }
 
-  HDC dc = ::GetDC(app->m_specific->m_hwnd);
-  app->m_specific->m_current_dc = dc;
   LRESULT ret = 0;
 
   switch(msg) {
@@ -786,8 +780,6 @@ LRESULT CALLBACK window_proc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
       ret = ::DefWindowProc(hWnd, msg, wParam, lParam);
       break;
   }
-  app->m_specific->m_current_dc = 0;
-  ::ReleaseDC(app->m_specific->m_hwnd, dc);
   return ret;
 }
 

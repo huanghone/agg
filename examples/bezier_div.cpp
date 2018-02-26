@@ -63,39 +63,39 @@ public:
 
 		m_curve1.line_color(m_ctrl_color);
 		m_curve1.curve(170, 424, 13, 87, 488, 423, 26, 333);
-		AddChild(m_curve1);
+		AddChild(&m_curve1);
 
 		m_angle_tolerance.label("Angle Tolerance=%.0f deg");
 		m_angle_tolerance.range(0, 90);
 		m_angle_tolerance.value(15);
-		AddChild(m_angle_tolerance);
+		AddChild(&m_angle_tolerance);
 
 		m_approximation_scale.label("Approximation Scale=%.3f");
 		m_approximation_scale.range(0.1, 5);
 		m_approximation_scale.value(1.0);
-		AddChild(m_approximation_scale);
+		AddChild(&m_approximation_scale);
 
 		m_cusp_limit.label("Cusp Limit=%.0f deg");
 		m_cusp_limit.range(0, 90);
 		m_cusp_limit.value(0);
-		AddChild(m_cusp_limit);
+		AddChild(&m_cusp_limit);
 
 		m_width.label("Width=%.2f");
 		m_width.range(-50, 100);
 		m_width.value(50.0);
-		AddChild(m_width);
+		AddChild(&m_width);
 
 		m_show_points.status(true);
-		AddChild(m_show_points);
+		AddChild(&m_show_points);
 		
 		m_show_outline.no_transform();
 		m_show_outline.status(true);
-		AddChild(m_show_outline);
+		AddChild(&m_show_outline);
 
 		m_curve_type.add_item("Incremental");
 		m_curve_type.add_item("Subdiv");
 		m_curve_type.cur_item(1);
-		AddChild(m_curve_type);
+		AddChild(&m_curve_type);
 
 		m_case_type.text_size(7);
 		m_case_type.text_thickness(1.0);
@@ -108,7 +108,7 @@ public:
 		m_case_type.add_item("Fancy Stroke");
 		m_case_type.add_item("Jaw");
 		m_case_type.add_item("Ugly Jaw");
-		AddChild(m_case_type);
+		AddChild(&m_case_type);
 
 		m_inner_join.text_size(8);
 		m_inner_join.add_item("Inner Bevel");
@@ -116,7 +116,7 @@ public:
 		m_inner_join.add_item("Inner Jag");
 		m_inner_join.add_item("Inner Round");
 		m_inner_join.cur_item(3);
-		AddChild(m_inner_join);
+		AddChild(&m_inner_join);
 
 		m_line_join.text_size(8);
 		m_line_join.add_item("Miter Join");
@@ -126,14 +126,14 @@ public:
 		m_line_join.add_item("Miter Round");
 
 		m_line_join.cur_item(1);
-		AddChild(m_line_join);
+		AddChild(&m_line_join);
 
 		m_line_cap.text_size(8);
 		m_line_cap.add_item("Butt Cap");
 		m_line_cap.add_item("Square Cap");
 		m_line_cap.add_item("Round Cap");
 		m_line_cap.cur_item(0);
-		AddChild(m_line_cap);
+		AddChild(&m_line_cap);
 	}
 	
 	template<class Curve> double measure_time(Curve& curve) {
@@ -361,38 +361,15 @@ private:
 	agg::RBoxCtrl m_line_cap;
 };
 
-class ContentWindow : public agg::Widget {
+class ContentDelegate: public agg::Widget::Delegate {
 public:
-	typedef agg::renderer_base<pixfmt> renderer_base_type;
-
-	ContentWindow(agg::pix_format_e format, bool flip_y):
-		agg::Widget(format, flip_y),
-		content(flip_y) {
-
-		AddChildView(content);
+	virtual agg::View* GetContentView() override {
+		return new ContentView(flip_y);
 	}
-
-	virtual void on_draw() {
-		pixfmt pf(rbuf_window());
-		renderer_base_type ren_base(pf);
-		ren_base.clear(agg::rgba8(255, 255, 255));
-
-		Canvas canvas;
-		canvas.attach(ren_base);
-
-		root_view_.Paint(canvas);
-	}
-
-	virtual void on_ctrl_change() {
-		force_redraw();
-	}
-
-private:
-	ContentView content;
 };
 
 int agg_main(int argc, char* argv[]) {
-	ContentWindow main_wnd(agg::pix_format_bgr24, flip_y);
+	agg::Widget main_wnd(agg::pix_format_bgr24, flip_y, new ContentDelegate);
 	main_wnd.caption("AGG Example");
 	if(main_wnd.init(655, 520, agg::window_resize)) {
 		return main_wnd.run();

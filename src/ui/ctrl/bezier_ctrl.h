@@ -61,7 +61,7 @@ private:
   curve4 m_curve;
   ellipse m_ellipse;
   conv_stroke<curve4> m_stroke;
-  polygon_ctrl_impl m_poly;
+  PolygonCtrlBase m_poly;
   unsigned m_idx;
 };
 
@@ -132,7 +132,7 @@ private:
   curve3 m_curve;
   ellipse m_ellipse;
   conv_stroke<curve3> m_stroke;
-  polygon_ctrl_impl m_poly;
+  PolygonCtrlBase m_poly;
   unsigned m_idx;
 };
 

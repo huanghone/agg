@@ -18,8 +18,8 @@ public:
   {
   }
 
-	void AddChild(View& c) {
-		child_views_.push_back(&c);
+	void AddChild(View* c) {
+		child_views_.push_back(c);
 	}
 
 	virtual void Paint(Canvas& canvas) {

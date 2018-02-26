@@ -3,7 +3,7 @@
 namespace agg
 {
 
-    polygon_ctrl_impl::polygon_ctrl_impl(unsigned np, double point_radius) :
+    PolygonCtrlBase::PolygonCtrlBase(unsigned np, double point_radius) :
         View(0, 0, 1, 1, false),
         m_polygon(np * 2),
         m_num_points(np),
@@ -21,13 +21,13 @@ namespace agg
     }
 
 
-    void polygon_ctrl_impl::rewind(unsigned)
+    void PolygonCtrlBase::rewind(unsigned)
     {
         m_status = 0;
         m_stroke.rewind(0);
     }
 
-    unsigned polygon_ctrl_impl::vertex(double* x, double* y)
+    unsigned PolygonCtrlBase::vertex(double* x, double* y)
     {
         unsigned cmd = path_cmd_stop;
         double r = m_point_radius;
@@ -62,7 +62,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::check_edge(unsigned i, double x, double y) const
+    bool PolygonCtrlBase::check_edge(unsigned i, double x, double y) const
     {
        bool ret = false;
 
@@ -102,13 +102,13 @@ namespace agg
 
 
 
-    bool polygon_ctrl_impl::InRect(double x, double y) const
+    bool PolygonCtrlBase::InRect(double x, double y) const
     {
         return false;
     }
 
 
-    bool polygon_ctrl_impl::OnMouseButtonDown(double x, double y)
+    bool PolygonCtrlBase::OnMouseButtonDown(double x, double y)
     {
         unsigned i;
         bool ret = false;
@@ -156,7 +156,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::OnMouseMove(double x, double y, bool button_flag)
+    bool PolygonCtrlBase::OnMouseMove(double x, double y, bool button_flag)
     {
         bool ret = false;
         double dx;
@@ -205,7 +205,7 @@ namespace agg
         return ret;
     }
 
-    bool polygon_ctrl_impl::OnMouseButtonUp(double x, double y)
+    bool PolygonCtrlBase::OnMouseButtonUp(double x, double y)
     {
         bool ret = (m_node >= 0) || (m_edge >= 0);
         m_node = -1;
@@ -214,7 +214,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::OnArrowKeys(bool left, bool right, bool down, bool up)
+    bool PolygonCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
         return false;
     }
@@ -251,7 +251,7 @@ namespace agg
     //
     // Input 2D polygon _pgon_ with _numverts_ number of vertices and test point
     // _point_, returns 1 if inside, 0 if outside.
-    bool polygon_ctrl_impl::point_in_polygon(double tx, double ty) const
+    bool PolygonCtrlBase::point_in_polygon(double tx, double ty) const
     {
         if(m_num_points < 3) return false;
         if(!m_in_polygon_check) return false;

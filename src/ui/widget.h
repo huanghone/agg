@@ -238,6 +238,12 @@ class WidgeImp;
 // 
 class Widget {
 public:
+	class Delegate {
+	public:
+		virtual View* GetContentView() = 0;
+	};
+
+public:
 	void OnSize(unsigned width, unsigned height);
 	void OnPaint();
 	void OnDestory() { ::PostQuitMessage(0); }
@@ -249,12 +255,13 @@ public:
 	void OnChar(WPARAM wParam);
 	void OnKeyDown(WPARAM wParam);
 	void OnKeyUp(WPARAM wParam);
+	void UpdateCursor(int x, int y);
 
 	enum max_images_e { max_images = 16 };
 
 	// format - see enum pix_format_e {};
 	// flip_y - true if you want to have the Y-axis flipped vertically.
-	Widget(pix_format_e format, bool flip_y);
+	Widget(pix_format_e format, bool flip_y, Delegate* delegate);
 	virtual ~Widget();
 
 	// Setting the windows caption (title). Should be able
@@ -333,7 +340,6 @@ public:
 	// system.
 	const char* img_ext() const;
 
-	//--------------------------------------------------------------------
 	void copy_img_to_window(unsigned idx) {
 		if (idx < max_images && rbuf_img(idx).buf())
 		{
@@ -341,7 +347,6 @@ public:
 		}
 	}
 
-	//--------------------------------------------------------------------
 	void copy_window_to_img(unsigned idx) {
 		if (idx < max_images)
 		{
@@ -350,7 +355,6 @@ public:
 		}
 	}
 
-	//--------------------------------------------------------------------
 	void copy_img_to_img(unsigned idx_to, unsigned idx_from) {
 		if (idx_from < max_images && idx_to < max_images && rbuf_img(idx_from).buf()) {
 			create_img(idx_to, rbuf_img(idx_from).width(), rbuf_img(idx_from).height());
@@ -366,7 +370,21 @@ public:
 	virtual void OnMouseButtonUp(int x, int y, unsigned flags) {}
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {}
 	virtual void on_ctrl_change() {}
-	virtual void on_draw() {}
+
+	virtual void on_draw() {
+		typedef agg::pixfmt_bgr24 pixfmt;
+		typedef agg::renderer_base<pixfmt> renderer_base_type;
+
+		pixfmt pf(rbuf_window());
+		renderer_base_type ren_base(pf);
+		ren_base.clear(agg::rgba8(255, 255, 255));
+
+		Canvas canvas;
+		canvas.attach(ren_base);
+
+		root_view_.Paint(canvas);
+	}
+
 	virtual void on_post_draw(void* raw_handler) {}
 
 	//--------------------------------------------------------------------
@@ -379,7 +397,7 @@ public:
 	// included into the basic AGG package do).
 	// If you don't need a particular control to be scaled automatically 
 	// call ctrl::no_transform() after adding.
-	void AddChildView(View& c) { root_view_.AddChild(c); c.transform(m_resize_mtx); }
+	void AddChildView(View& c) { root_view_.AddChild(&c); c.transform(m_resize_mtx); }
 
 	//--------------------------------------------------------------------
 	// Auxiliary functions. trans_affine_resizing() modifier sets up the resizing 
@@ -417,16 +435,6 @@ public:
 	double   initial_width()  const { return m_initial_width; }
 	double   initial_height() const { return m_initial_height; }
 	unsigned window_flags() const { return m_window_flags; }
-
-	//--------------------------------------------------------------------
-	// Get raw display handler depending on the system. 
-	// For win32 its an HDC, for other systems it can be a pointer to some
-	// structure. See the implementation files for detals.
-	// It's provided "as is", so, first you should check if it's not null.
-	// If it's null the raw_display_handler is not supported. Also, there's 
-	// no guarantee that this function is implemented, so, in some 
-	// implementations you may have simply an unresolved symbol when linking.
-	void* raw_display_handler();
 
 	//--------------------------------------------------------------------
 	// display message box or print the message to the console 
