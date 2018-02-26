@@ -120,6 +120,12 @@ public:
 		return false;
 	}
 
+	virtual void Paint(Canvas& canvas) override {
+		for (auto view : child_views_) {
+			view->Paint(canvas);
+		}
+	}
+
 	virtual bool on_mouse_button_down(double x, double y) override {
 		for (auto view : child_views_) {
 			if (view->on_mouse_button_down(x, y)) return true;

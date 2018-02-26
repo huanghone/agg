@@ -451,18 +451,7 @@ public:
 
 		canvas.DrawPath(pt, agg::rgba8(0, 0, 0));
 
-		m_curve1.Paint(canvas);
-		m_angle_tolerance.Paint(canvas);
-		m_approximation_scale.Paint(canvas);
-		m_cusp_limit.Paint(canvas);
-		m_width.Paint(canvas);
-		m_show_points.Paint(canvas);
-		m_show_outline.Paint(canvas);
-		m_curve_type.Paint(canvas);
-		m_case_type.Paint(canvas);
-		m_inner_join.Paint(canvas);
-		m_line_join.Paint(canvas);
-		m_line_cap.Paint(canvas);
+		m_ctrls.Paint(canvas);
 	}
 
 	virtual void on_key(int x, int y, unsigned key, unsigned flags) {
