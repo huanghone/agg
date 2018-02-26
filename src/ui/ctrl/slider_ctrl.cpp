@@ -200,7 +200,7 @@ unsigned SliderCtrlBase::vertex(double* x, double* y) {
   return cmd;
 }
 
-bool SliderCtrlBase::in_rect(double x, double y) const {
+bool SliderCtrlBase::InRect(double x, double y) const {
   inverse_transform_xy(&x, &y);
   return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
 }
@@ -242,7 +242,7 @@ bool SliderCtrlBase::OnMouseButtonUp(double, double) {
   return true;
 }
 
-bool SliderCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up) {
+bool SliderCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up) {
 	double d = 0.005;
 	if(m_num_steps) {
 		d = 1.0 / m_num_steps;

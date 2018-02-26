@@ -379,7 +379,7 @@ public:
 	// included into the basic AGG package do).
 	// If you don't need a particular control to be scaled automatically 
 	// call ctrl::no_transform() after adding.
-	void AddChildView(View& c) { root_view_.add(c); c.transform(m_resize_mtx); }
+	void AddChildView(View& c) { root_view_.AddChild(c); c.transform(m_resize_mtx); }
 
 	//--------------------------------------------------------------------
 	// Auxiliary functions. trans_affine_resizing() modifier sets up the resizing 

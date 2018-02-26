@@ -297,7 +297,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool gamma_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool gamma_ctrl_impl::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
         double kx1, ky1, kx2, ky2;
         bool ret = false;
@@ -335,7 +335,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool gamma_ctrl_impl::in_rect(double x, double y) const
+    bool gamma_ctrl_impl::InRect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;

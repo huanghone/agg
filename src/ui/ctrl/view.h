@@ -18,7 +18,7 @@ public:
   {
   }
 
-	void add(View& c) {
+	void AddChild(View& c) {
 		child_views_.push_back(&c);
 	}
 
@@ -28,9 +28,9 @@ public:
 		}
 	}
 
-	virtual bool in_rect(double x, double y) const {
+	virtual bool InRect(double x, double y) const {
 		for (auto view : child_views_) {
-			if (view->in_rect(x, y)) return true;
+			if (view->InRect(x, y)) return true;
 		}
 		return false;
 	}
@@ -57,9 +57,9 @@ public:
 		return false;
 	}
 
-	virtual bool on_arrow_keys(bool left, bool right, bool down, bool up) {
+	virtual bool OnArrowKeys(bool left, bool right, bool down, bool up) {
 		if (m_cur_ctrl >= 0) {
-			return child_views_[m_cur_ctrl]->on_arrow_keys(left, right, down, up);
+			return child_views_[m_cur_ctrl]->OnArrowKeys(left, right, down, up);
 		}
 		return false;
 	}
@@ -82,7 +82,7 @@ public:
 	bool set_cur(double x, double y) {
 		unsigned i;
 		for (i = 0; i < child_views_.size(); i++) {
-			if (child_views_[i]->in_rect(x, y)) {
+			if (child_views_[i]->InRect(x, y)) {
 				if (m_cur_ctrl != int(i)) {
 					m_cur_ctrl = i;
 					return true;
@@ -114,31 +114,9 @@ protected:
 	int m_cur_ctrl;
 };
 
-template<class Rasterizer, class Scanline, class Renderer, class Ctrl> 
-void render_ctrl(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c) {
-	unsigned i;
-	for(i = 0; i < c.num_paths(); i++) {
-		ras.reset();
-		ras.add_path(c, i);
-		render_scanlines_aa_solid(ras, sl, r, c.color(i));
-	}
-}
-
-template<class Rasterizer, class Scanline, class Renderer, class Ctrl> 
-void render_ctrl_rs(Rasterizer& ras, Scanline& sl, Renderer& r, Ctrl& c) {
-	unsigned i;
-	for(i = 0; i < c.num_paths(); i++) {
-		ras.reset();
-		ras.add_path(c, i);
-		r.color(c.color(i));
-		render_scanlines(ras, sl, r);
-	}
-}
-
 class RootView : public View {
 public:
 	RootView() : View(0, 0, 0, 0, true) {}
-
 };
 
 }

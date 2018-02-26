@@ -195,7 +195,7 @@ unsigned RBoxCtrlBase::vertex(double* x, double* y) {
   return cmd;
 }
 
-bool RBoxCtrlBase::in_rect(double x, double y) const {
+bool RBoxCtrlBase::InRect(double x, double y) const {
   inverse_transform_xy(&x, &y);
   return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
 }
@@ -222,7 +222,7 @@ bool RBoxCtrlBase::OnMouseButtonUp(double, double) {
   return false;
 }
 
-bool RBoxCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up) {
+bool RBoxCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up) {
 	if(m_cur_item >= 0) {
 		if(up || right) {
 			m_cur_item++;

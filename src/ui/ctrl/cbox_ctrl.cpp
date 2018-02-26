@@ -56,7 +56,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    bool CBoxCtrlBase::in_rect(double x, double y) const
+    bool CBoxCtrlBase::InRect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && y >= m_y1 && x <= m_x2 && y <= m_y2;
@@ -69,7 +69,7 @@ namespace agg
     }
 
     //------------------------------------------------------------------------
-    bool CBoxCtrlBase::on_arrow_keys(bool, bool, bool, bool)
+    bool CBoxCtrlBase::OnArrowKeys(bool, bool, bool, bool)
     {
         return false;
     }

@@ -22,11 +22,11 @@ public:
 	int cur_item() const { return m_cur_item; }
 	void cur_item(int i) { m_cur_item = i; }
 
-	virtual bool in_rect(double x, double y) const;
+	virtual bool InRect(double x, double y) const;
 	virtual bool OnMouseButtonDown(double x, double y);
 	virtual bool OnMouseButtonUp(double x, double y);
 	virtual bool OnMouseMove(double x, double y, bool button_flag);
-	virtual bool on_arrow_keys(bool left, bool right, bool down, bool up);
+	virtual bool OnArrowKeys(bool left, bool right, bool down, bool up);
 
 	// Vertex soutce interface
 	unsigned num_paths() { return 5; };

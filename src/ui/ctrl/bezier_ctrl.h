@@ -46,11 +46,11 @@ public:
   void point_radius(double r) { m_poly.point_radius(r); }
   double point_radius() const { return m_poly.point_radius(); }
 
-  virtual bool in_rect(double x, double y) const;
+  virtual bool InRect(double x, double y) const;
   virtual bool OnMouseButtonDown(double x, double y);
   virtual bool OnMouseButtonUp(double x, double y);
   virtual bool OnMouseMove(double x, double y, bool button_flag);
-  virtual bool on_arrow_keys(bool left, bool right, bool down, bool up);
+  virtual bool OnArrowKeys(bool left, bool right, bool down, bool up);
 
   // Vertex source interface
   unsigned num_paths() { return 7; };
@@ -117,11 +117,11 @@ public:
 	void point_radius(double r) { m_poly.point_radius(r); }
 	double point_radius() const   { return m_poly.point_radius(); }
 
-	virtual bool in_rect(double x, double y) const;
+	virtual bool InRect(double x, double y) const;
 	virtual bool OnMouseButtonDown(double x, double y);
 	virtual bool OnMouseButtonUp(double x, double y);
 	virtual bool OnMouseMove(double x, double y, bool button_flag);
-	virtual bool on_arrow_keys(bool left, bool right, bool down, bool up);
+	virtual bool OnArrowKeys(bool left, bool right, bool down, bool up);
 
 	// Vertex source interface
 	unsigned num_paths() { return 6; };

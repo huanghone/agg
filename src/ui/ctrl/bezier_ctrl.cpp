@@ -142,7 +142,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool BezierCtrlBase::in_rect(double x, double y) const
+    bool BezierCtrlBase::InRect(double x, double y) const
     {
         return false;
     }
@@ -172,9 +172,9 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool BezierCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool BezierCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
-        return m_poly.on_arrow_keys(left, right, down, up);
+        return m_poly.OnArrowKeys(left, right, down, up);
     }
 
 
@@ -301,7 +301,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool Curve3CtrlBase::in_rect(double x, double y) const
+    bool Curve3CtrlBase::InRect(double x, double y) const
     {
         return false;
     }
@@ -331,9 +331,9 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool Curve3CtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool Curve3CtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
-        return m_poly.on_arrow_keys(left, right, down, up);
+        return m_poly.OnArrowKeys(left, right, down, up);
     }
 
 

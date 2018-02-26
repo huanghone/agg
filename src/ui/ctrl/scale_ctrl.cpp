@@ -245,7 +245,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool ScaleCtrlBase::in_rect(double x, double y) const
+    bool ScaleCtrlBase::InRect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
@@ -411,7 +411,7 @@ namespace agg
 
 
     //------------------------------------------------------------------------
-    bool ScaleCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool ScaleCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
 /*
         if(right || up)

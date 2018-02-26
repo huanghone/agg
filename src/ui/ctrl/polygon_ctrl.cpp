@@ -102,7 +102,7 @@ namespace agg
 
 
 
-    bool polygon_ctrl_impl::in_rect(double x, double y) const
+    bool polygon_ctrl_impl::InRect(double x, double y) const
     {
         return false;
     }
@@ -214,7 +214,7 @@ namespace agg
     }
 
 
-    bool polygon_ctrl_impl::on_arrow_keys(bool left, bool right, bool down, bool up)
+    bool polygon_ctrl_impl::OnArrowKeys(bool left, bool right, bool down, bool up)
     {
         return false;
     }

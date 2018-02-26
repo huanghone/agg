@@ -530,7 +530,7 @@ void Widget::OnLButtonDown(int x, int y, WPARAM wParam) {
 		on_ctrl_change();
 		force_redraw();
 	}	else {
-		if (root_view_.in_rect(m_specific->m_cur_x, m_specific->m_cur_y)) {
+		if (root_view_.InRect(m_specific->m_cur_x, m_specific->m_cur_y)) {
 			if (root_view_.set_cur(m_specific->m_cur_x, m_specific->m_cur_y)) {
 				on_ctrl_change();
 				force_redraw();
@@ -595,7 +595,7 @@ void Widget::OnMouseMove(int x, int y, WPARAM wParam) {
 		on_ctrl_change();
 		force_redraw();
 	}	else {
-		if (!root_view_.in_rect(m_specific->m_cur_x, m_specific->m_cur_y)) {
+		if (!root_view_.InRect(m_specific->m_cur_x, m_specific->m_cur_y)) {
 			OnMouseMove(m_specific->m_cur_x, m_specific->m_cur_y, m_specific->m_input_flags);
 		}
 	}
@@ -658,7 +658,7 @@ void Widget::OnKeyDown(WPARAM wParam) {
 				m_specific->m_last_translated_key,
 				m_specific->m_input_flags);
 		} else {
-			if (root_view_.on_arrow_keys(left, right, down, up)) {
+			if (root_view_.OnArrowKeys(left, right, down, up)) {
 				on_ctrl_change();
 				force_redraw();
 			} else {

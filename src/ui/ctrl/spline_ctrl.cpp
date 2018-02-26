@@ -290,7 +290,7 @@ namespace agg {
 
 
     //------------------------------------------------------------------------
-    bool SplineCtrlBase::in_rect(double x, double y) const
+    bool SplineCtrlBase::InRect(double x, double y) const
     {
         inverse_transform_xy(&x, &y);
         return x >= m_x1 && x <= m_x2 && y >= m_y1 && y <= m_y2;
@@ -341,7 +341,7 @@ bool SplineCtrlBase::OnMouseMove(double x, double y, bool button_flag) {
 	return false;
 }
 
-bool SplineCtrlBase::on_arrow_keys(bool left, bool right, bool down, bool up) {
+bool SplineCtrlBase::OnArrowKeys(bool left, bool right, bool down, bool up) {
 	double kx = 0.0;
 	double ky = 0.0;
 	bool ret = false;
